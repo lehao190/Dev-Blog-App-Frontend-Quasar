@@ -1,4 +1,4 @@
-# Frontend-Dev-Blog to visit
+# BackEnd-Dev-Blog to visit
 
 [Back-End of Dev-Blog App](https://github.com/lehao190/Dev-Blog-App-Backend-FeathersJS)
 
