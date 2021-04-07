@@ -23,7 +23,7 @@
         </span>
       </div>
       <router-link to="post"
-        ><div class="q-mt-sm q-mb-xs user-post-text">
+        ><div class="q-mt-sm q-mb-xs user-post-text text-weight-bold">
           Top 16 Browser Extensions For Increased Developer Productivity
         </div></router-link
       >
@@ -34,5 +34,3 @@
 <script>
 export default {}
 </script>
-
-<style></style>
