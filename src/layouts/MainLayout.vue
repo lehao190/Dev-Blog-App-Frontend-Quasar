@@ -1,45 +1,69 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="leftDrawerOpen = !leftDrawerOpen"
-        />
+  <q-layout view="hhh Lpr fFf" class="bg-accent">
+    <q-header reveal elevated class="bg-primary text-white">
+      <q-toolbar class="main-wrapper text-black">
+        <q-toolbar-title class="q-py-sm q-gutter-md">
+          <!-- Display on lesser than medium size only -->
+          <q-btn class="lt-md" dense flat round icon="menu" @click="left = !left" />
 
-        <q-toolbar-title>
-          Quasar App
+          <q-avatar
+            class="bg-black text-white"
+            icon="fab fa-blogger"
+            size="46px"
+            square
+          />
+          <!-- Searching for posts -->
+          <q-input
+            class="absolute gt-sm"
+            style="width: 400px; display: inline-block; top: -5px;"
+            filled
+            dense
+            placeholder="Tìm kiếm..."
+          />
         </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <!-- Login/Signup -->
+        <div class="q-gutter-md">
+          <!-- Display on greater than medium size only -->
+          <q-btn
+            class="text-weight-bold gt-sm"
+            flat
+            type="a"
+            label="Đăng Nhập"
+            text-color="blue-8"
+            no-caps
+          />
+
+          <!-- Display on lesser than medium size only -->
+          <q-btn
+            class="text-weight-bold lt-md"
+            flat
+            type="a"
+            to="/search"
+            icon="fas fa-search"
+            text-color="dark"
+            no-caps
+          />
+
+          <q-btn
+            class="text-weight-bold"
+            color="secondary"
+            type="a"
+            label="Tạo Tài Khoản"
+            text-color="primary"
+            no-caps
+          />
+        </div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-      content-class="bg-grey-1"
-    >
-      <q-list>
-        <q-item-label
-          header
-          class="text-grey-8"
-        >
-          Essential Links
-        </q-item-label>
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
+    <!-- left sidebar when in mobile mode -->
+    <q-drawer v-model="left" side="left">
+      <!-- drawer content -->
+      <IntroSec/>
+      <UserNav/>
     </q-drawer>
-
+    <!-- Main content -->
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -47,60 +71,17 @@
 </template>
 
 <script>
-import EssentialLink from 'components/EssentialLink.vue'
-
-const linksData = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-];
+import IntroSec from '../components/home_page/IntroSec'
+import UserNav from '../components/home_page/UserNav'
 
 export default {
-  name: 'MainLayout',
-  components: { EssentialLink },
+  components: {
+    IntroSec,
+    UserNav
+  },
   data () {
     return {
-      leftDrawerOpen: false,
-      essentialLinks: linksData
+      left: false
     }
   }
 }
