@@ -61,7 +61,7 @@
         />
 
         <q-btn
-          label="458 likes"
+          label="458 comments"
           color="primary"
           text-color="secondary"
           icon="fas fa-comment"
