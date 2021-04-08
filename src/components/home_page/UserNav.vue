@@ -22,7 +22,7 @@
         <q-item-section class="text-weight-bold">Đăng nhập/ký</q-item-section>
       </q-item>
 
-      <q-item clickable v-ripple>
+      <q-item clickable v-ripple :to="{ name: 'tags' }">
         <q-item-section avatar>
           <q-avatar
             rounded
@@ -56,5 +56,3 @@
 <script>
 export default {}
 </script>
-
-<style></style>
