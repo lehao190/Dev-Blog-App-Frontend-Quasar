@@ -9,7 +9,7 @@
         <q-item-section class="text-weight-bold">Trang chủ</q-item-section>
       </q-item>
 
-      <q-item clickable v-ripple>
+      <q-item clickable v-ripple :to="{ name: 'login' }">
         <q-item-section avatar>
           <q-avatar
             rounded
