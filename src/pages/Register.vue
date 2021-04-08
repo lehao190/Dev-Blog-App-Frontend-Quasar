@@ -9,21 +9,31 @@
           <q-separator />
           <span
             class="text-body text-grey-8 bg-primary absolute-center text-center"
-            >Chưa có tài khoản? <router-link class="text-blue" :to="{ name: 'register' }">Vào Đăng Ký</router-link></span
+            >Có tài khoản? <router-link class="text-blue" :to="{ name: 'login' }">Vào Đăng Nhập</router-link></span
           >
         </div>
 
         <!-- Local Auth Login -->
         <div class="q-py-sm">
-          <q-input dense color="blue" label="Email" type="text" />
+          <q-input color="blue" dense label="Name" type="text" />
 
-          <q-input dense color="blue" label="Password" type="password" />
+          <q-input color="blue" dense label="Email" type="text" />
+
+          <q-input color="blue" dense label="Password" type="password" />
+
+          <q-input color="blue" dense label="Re-Password" type="password" />
+
+          <q-file dense color="blue" label="Avatar">
+            <template v-slot:prepend>
+              <q-icon name="cloud_upload" />
+            </template>
+          </q-file>
 
           <q-btn
             type="submit"
             class="normal-hover full-width q-py-xs text-weight-bold text-subtitle2 q-mt-lg"
             color="secondary"
-            label="Đăng Nhập"
+            label="Đăng Ký"
             no-caps
           />
         </div>
