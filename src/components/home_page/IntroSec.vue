@@ -14,6 +14,7 @@
             class="text-weight-bold full-width"
             flat
             type="a"
+            :to="{ name: 'login' }"
             label="Đăng Nhập"
             text-color="blue-8"
             no-caps
@@ -24,6 +25,7 @@
             class="text-weight-bold full-width"
             color="secondary"
             type="a"
+            :to="{ name: 'register' }"
             label="Tạo Tài Khoản"
             text-color="primary"
             no-caps
