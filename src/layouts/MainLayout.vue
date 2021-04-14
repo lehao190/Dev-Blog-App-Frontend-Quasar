@@ -33,6 +33,16 @@
 
         <!-- Login/Signup -->
         <div class="q-gutter-md">
+          <!-- <q-btn
+            v-if="true"
+            class="text-weight-bold"
+            color="secondary"
+            type="a"
+            :label="this.getUser.email"
+            text-color="primary"
+            no-caps
+          /> -->
+
           <!-- Display on greater than medium size only -->
           <q-btn
             class="text-weight-bold gt-sm"
@@ -127,6 +137,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import IntroSec from '../components/home_page/IntroSec'
 import UserNav from '../components/home_page/UserNav'
 
@@ -139,6 +150,11 @@ export default {
     return {
       left: false
     }
+  },
+  computed: {
+    ...mapGetters('user', [
+      'getUser'
+    ])
   }
 }
 </script>
