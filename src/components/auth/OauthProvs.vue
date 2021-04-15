@@ -14,13 +14,15 @@
       <!-- Github -->
       <q-btn
         type="a"
-        to="/github"
+        to="/oauth/github"
         class="normal-hover full-width q-py-xs text-weight-bold text-subtitle2"
         color="black"
         label="Đăng nhập bằng GitHub"
         icon="fab fa-github"
         no-caps
       />
+
+      <a href="http://localhost:3030/oauth/github">Login with GitHub</a>
 
       <!-- Google -->
       <q-btn

@@ -33,7 +33,7 @@
 
         <!-- Login/Signup -->
         <div class="q-gutter-md">
-          <!-- <q-btn
+          <q-btn
             v-if="true"
             class="text-weight-bold"
             color="secondary"
@@ -41,7 +41,7 @@
             :label="this.getUser.email"
             text-color="primary"
             no-caps
-          /> -->
+          />
 
           <!-- Display on greater than medium size only -->
           <q-btn
@@ -142,6 +142,11 @@ import IntroSec from '../components/home_page/IntroSec'
 import UserNav from '../components/home_page/UserNav'
 
 export default {
+  preFetch ({ store }) {
+    store.dispatch({
+      type: 'user/me'
+    })
+  },
   components: {
     IntroSec,
     UserNav
@@ -152,9 +157,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('user', [
-      'getUser'
-    ])
+    ...mapGetters('user', ['getUser'])
   }
 }
 </script>

@@ -57,7 +57,6 @@
 </template>
 
 <script>
-import { api } from 'boot/axios'
 import { mapActions } from 'vuex'
 import OauthProvs from '../components/auth/OauthProvs.vue'
 
@@ -78,10 +77,6 @@ export default {
         email: this.email,
         password: this.password
       })
-    },
-    async aha () {
-      const { data } = await api.post('/aha')
-      console.log(data)
     }
   }
 }
