@@ -1,8 +1,12 @@
 export default function () {
   return {
+    loading: true,
+    error: {},
     user: {
-      username: '',
-      email: ''
+      id: '',
+      name: '',
+      email: '',
+      image: ''
     }
   }
 }

@@ -124,11 +124,13 @@
     </q-header>
 
     <!-- left sidebar when in mobile mode -->
+    <!-- IGNORE v-model="left" -->
     <q-drawer v-model="left" side="left">
       <!-- drawer content -->
       <IntroSec />
       <UserNav />
     </q-drawer>
+
     <!-- Main content -->
     <q-page-container>
       <router-view />
@@ -142,6 +144,7 @@ import IntroSec from '../components/home_page/IntroSec'
 import UserNav from '../components/home_page/UserNav'
 
 export default {
+  name: 'MainLayout',
   preFetch ({ store }) {
     store.dispatch({
       type: 'user/me'
@@ -157,7 +160,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('user', ['getUser'])
+    ...mapGetters('user', ['getUser', 'getUserError'])
   }
 }
 </script>
