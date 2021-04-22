@@ -145,11 +145,6 @@ import UserNav from '../components/home_page/UserNav'
 
 export default {
   name: 'MainLayout',
-  preFetch ({ store }) {
-    store.dispatch({
-      type: 'user/me'
-    })
-  },
   components: {
     IntroSec,
     UserNav

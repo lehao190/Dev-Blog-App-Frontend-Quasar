@@ -1,18 +1,13 @@
-export function userRequest (state, payload) {
+export function USER_CREDENTIALS_REQUEST (state, payload) {
   state.loading = true
 }
 
-export function userError (state, payload) { 
+export function USER_CREDENTIALS_FAILURE (state, payload) { 
   state.loading = false
   state.error = payload.error
 }
 
-export function me (state, payload) {
+export function USER_CREDENTIALS_SUCCESS (state, payload) {
   state.loading = false
   state.user = payload.user
-}
-
-export function login (state, payload) {
-  state.loading = false
-  state.user = payload.data.user
 }
