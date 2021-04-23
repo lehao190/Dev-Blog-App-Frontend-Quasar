@@ -5,7 +5,7 @@
         <!-- Oauth Login -->
         <OauthProvs />
 
-        <div class="q-py-md relative-position">
+        <div class="q-py-md relative-position" @click="getUsers">
           <q-separator />
           <span
             class="text-body text-grey-8 bg-primary absolute-center text-center"
@@ -59,6 +59,7 @@
 <script>
 import { mapActions } from 'vuex'
 import OauthProvs from '../components/auth/OauthProvs.vue'
+import { api } from 'boot/axios'
 
 export default {
   components: {
@@ -77,6 +78,32 @@ export default {
         email: this.email,
         password: this.password
       })
+    },
+    // Refresh token incomplete
+    async refresh () {
+      const { data } = await api.post('/refresh_tokens', {
+        accessToken: this.$q.localStorage.getItem('accessToken')
+      })
+
+      this.$q.localStorage.set('accessToken', data.accessToken)
+
+      console.log('new access token: ', data)
+    },
+    async getUsers () {
+      try {
+        const { data } = await api.get('/users', {
+          headers: {
+            Authorization:
+              'Bearer ' + this.$q.localStorage.getItem('accessToken')
+          }
+        })
+
+        console.log('users data: ', data)
+      } catch (error) {
+        console.log(error.message)
+
+        this.refresh()
+      }
     }
   }
 }
