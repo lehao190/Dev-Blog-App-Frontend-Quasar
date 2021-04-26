@@ -81,13 +81,17 @@ export default {
     },
     // Refresh token incomplete
     async refresh () {
-      const { data } = await api.post('/refresh_tokens', {
-        accessToken: this.$q.localStorage.getItem('accessToken')
-      })
+      try {
+        const { data } = await api.post('/refresh_tokens', {
+          accessToken: this.$q.localStorage.getItem('accessToken')
+        })
 
-      this.$q.localStorage.set('accessToken', data.accessToken)
+        this.$q.localStorage.set('accessToken', data.accessToken)
 
-      console.log('new access token: ', data)
+        console.log('new access token: ', data)
+      } catch (error) {
+        this.$q.localStorage.clear()
+      }
     },
     async getUsers () {
       try {

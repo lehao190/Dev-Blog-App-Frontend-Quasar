@@ -31,7 +31,7 @@
       > 
         <div class="row q-gutter-md justify-center items-center text-center">
           <q-icon name="fab fa-google" />
-          <a class="text-white oauth-login" href="http://localhost:3030/oauth/github">Đăng nhập bằng Google</a>
+          <a class="text-white oauth-login" href="http://localhost:3030/oauth/google">Đăng nhập bằng Google</a>
         </div>
       </q-btn>
     </div>
