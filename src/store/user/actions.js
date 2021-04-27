@@ -16,7 +16,6 @@ export async function me ({ commit }) {
       const accessToken = hashURL[1]
 
       LocalStorage.set('accessToken', accessToken)
-      LocalStorage.set('isAuthenticated', true)
     }
 
     commit({
@@ -38,8 +37,6 @@ export async function me ({ commit }) {
       user
     })
   } catch (error) {
-    LocalStorage.set('isAuthenticated', false)
-
     commit({
       type: USER_CREDENTIALS_FAILURE,
       error: error.response
@@ -63,8 +60,38 @@ export async function login ({ commit }, payload) {
     })
 
     const { user } = data
+    
+    LocalStorage.set('user', user)
+    LocalStorage.set('accessToken', data.accessToken)
 
-    LocalStorage.set('isAuthenticated', true)
+    commit({
+      type: USER_CREDENTIALS_SUCCESS,
+      user
+    })
+  } catch (error) {
+    commit({
+      type: USER_CREDENTIALS_FAILURE,
+      error: error.response
+    })
+  }
+}
+
+// Register user
+export async function register ({ commit }, payload) {
+  try {
+    const { email, password } = payload
+
+    commit({
+      type: USER_CREDENTIALS_REQUEST
+    })
+
+    const { data } = await api.post('/users', {
+      email,
+      password
+    })
+
+    const { user } = data
+
     LocalStorage.set('user', user)
     LocalStorage.set('accessToken', data.accessToken)
 

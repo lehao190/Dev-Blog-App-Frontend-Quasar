@@ -79,6 +79,7 @@ export default {
         password: this.password
       })
     },
+    
     // Refresh token incomplete
     async refresh () {
       try {
@@ -91,6 +92,10 @@ export default {
         console.log('new access token: ', data)
       } catch (error) {
         this.$q.localStorage.clear()
+
+        this.$store.commit({
+          type: 'user/USER_CREDENTIALS_RESET'
+        })
       }
     },
     async getUsers () {
