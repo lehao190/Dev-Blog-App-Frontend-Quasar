@@ -79,7 +79,7 @@ export default {
         password: this.password
       })
     },
-    
+
     // Refresh token incomplete
     async refresh () {
       try {
@@ -98,6 +98,7 @@ export default {
         })
       }
     },
+
     async getUsers () {
       try {
         const { data } = await api.get('/users', {
@@ -113,6 +114,28 @@ export default {
 
         this.refresh()
       }
+
+      // this.$socket.emit('aha', { name: 'Take me on mate hahaha!!!' })
+
+      // const { data } = await this.$axios.post('http://172.28.103.241:3030/authentication', {
+      //   strategy: 'local',
+      //   email: 'test@yahoo.com',
+      //   password: 'test'
+      // })
+
+      // this.data = data
+
+      // this.$socket.on('aha2', (data) => {
+      //   if (data) {
+      //     const audio = new Audio(require('../audio/tmobile.mp3'))
+      //     audio.play()
+      //   }
+      // })
+
+      // this.$q.notify({
+      //   type: 'positive',
+      //   message: `This is a "positive" type notification.`
+      // })
     }
   }
 }

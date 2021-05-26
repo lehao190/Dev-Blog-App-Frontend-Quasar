@@ -17,7 +17,7 @@ export async function me ({ commit }) {
 
       LocalStorage.set('accessToken', accessToken)
     }
-
+    
     commit({
       type: USER_CREDENTIALS_REQUEST
     })
