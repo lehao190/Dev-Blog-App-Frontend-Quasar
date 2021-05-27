@@ -1,4 +1,5 @@
 import { api } from 'boot/axios'
+import { app } from 'boot/socket'
 import { LocalStorage } from 'quasar'
 import {
   USER_CREDENTIALS_REQUEST,
@@ -79,26 +80,33 @@ export async function login ({ commit }, payload) {
 // Register user
 export async function register ({ commit }, payload) {
   try {
-    const { email, password } = payload
+    const { username, email, password, user_avatar } = payload
 
     commit({
       type: USER_CREDENTIALS_REQUEST
     })
 
-    const { data } = await api.post('/users', {
+    app.service('users').create({
+      username,
       email,
       password
     })
 
-    const { user } = data
+    // const { data } = await api.post('/users', {
+    //   username,
+    //   email,
+    //   password
+    // })
 
-    LocalStorage.set('user', user)
-    LocalStorage.set('accessToken', data.accessToken)
+    // const { user } = data
 
-    commit({
-      type: USER_CREDENTIALS_SUCCESS,
-      user
-    })
+    // LocalStorage.set('user', user)
+    // LocalStorage.set('accessToken', data.accessToken)
+
+    // commit({
+    //   type: USER_CREDENTIALS_SUCCESS,
+    //   user
+    // })
   } catch (error) {
     commit({
       type: USER_CREDENTIALS_FAILURE,
