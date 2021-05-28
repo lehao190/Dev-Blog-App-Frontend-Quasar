@@ -100,20 +100,21 @@ export default {
     },
 
     async getUsers () {
-      try {
-        const { data } = await api.get('/users', {
-          headers: {
-            Authorization:
-              'Bearer ' + this.$q.localStorage.getItem('accessToken')
-          }
-        })
+      // try {
+      //   const { data } = await api.get('/users', {
+      //     headers: {
+      //       Authorization:
+      //         'Bearer ' + this.$q.localStorage.getItem('accessToken')
+      //     }
+      //   })
 
-        console.log('users data: ', data)
-      } catch (error) {
-        console.log(error.message)
+      //   console.log('users data: ', data)
+      // } catch (error) {
+      //   console.log(error.message)
 
-        this.refresh()
-      }
+      //   this.refresh()
+      // }
+      
 
       // this.$socket.emit('aha', { name: 'Take me on mate hahaha!!!' })
 

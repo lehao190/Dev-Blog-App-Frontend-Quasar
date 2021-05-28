@@ -4,8 +4,8 @@ import socketio from '@feathersjs/socketio-client'
 import io from 'socket.io-client'
 import { Notify } from 'quasar'
 
-const socket = io('http://172.28.104.221:3030')
-// const socket = io('http://localhost:3030')
+// const socket = io('http://172.28.104.221:3030')
+const socket = io('http://localhost:3030')
 const app = feathers()
 
 // Set up Socket.io client with the socket
@@ -21,6 +21,7 @@ app.service('users').on('created', data => {
 app
   .service('users')
   .on('hello', data => console.log('Hello from Server mate: ', data))
+
 
 socket.on('connect', () => {
   console.log('User Connected to server: ', socket.connected)

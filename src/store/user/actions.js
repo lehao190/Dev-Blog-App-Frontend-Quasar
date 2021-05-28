@@ -82,21 +82,27 @@ export async function register ({ commit }, payload) {
   try {
     const { username, email, password, user_avatar } = payload
 
+    const formData = new FormData()
+    formData.append('username', username)
+    formData.append('email', email)
+    formData.append('password', password)
+    formData.append('user_avatar', user_avatar)
+
     commit({
       type: USER_CREDENTIALS_REQUEST
     })
 
-    app.service('users').create({
-      username,
-      email,
-      password
-    })
+    // const a = await app.service('users').find()
 
-    // const { data } = await api.post('/users', {
+    // console.log('a: ', a)
+
+    // app.service('users').create({
     //   username,
     //   email,
     //   password
     // })
+
+    const { data } = await api.post('/users', formData)
 
     // const { user } = data
 
