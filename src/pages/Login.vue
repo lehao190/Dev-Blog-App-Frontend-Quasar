@@ -5,7 +5,7 @@
         <!-- Oauth Login -->
         <OauthProvs />
 
-        <div class="q-py-md relative-position" @click="getUsers">
+        <div class="q-py-md relative-position">
           <q-separator />
           <span
             class="text-body text-grey-8 bg-primary absolute-center text-center"

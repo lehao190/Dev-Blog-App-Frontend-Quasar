@@ -79,6 +79,7 @@ export default {
         username: this.username,
         email: this.email,
         password: this.password,
+        rePassword: this.rePassword,
         user_avatar: this.user_avatar
       })
     }

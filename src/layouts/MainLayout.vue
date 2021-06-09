@@ -33,18 +33,19 @@
 
         <!-- Login/Signup -->
         <div class="q-gutter-md">
-          <q-btn
+          <!-- <q-btn
             v-if="true"
             class="text-weight-bold"
             color="secondary"
             type="a"
-            :label="this.getUser.email"
+            :label="this.getUser.user.email"
             text-color="primary"
             no-caps
-          />
+          /> -->
 
           <!-- Display on greater than medium size only -->
           <q-btn
+            v-if="this.authenticated === false"
             class="text-weight-bold gt-sm"
             flat
             type="a"
@@ -66,6 +67,7 @@
           />
 
           <q-btn
+            v-if="this.authenticated === false"
             class="text-weight-bold"
             color="secondary"
             type="a"
@@ -77,7 +79,7 @@
 
           <!-- Create Post -->
           <q-btn
-            v-if="false"
+            v-if="this.authenticated"
             class="text-weight-bold"
             color="secondary"
             type="a"
@@ -88,19 +90,19 @@
 
           <!-- User's Settings -->
           <q-btn-dropdown
-            v-if="false"
+            v-if="this.authenticated"
             color="primary"
             size="xl"
             no-icon-animation
             unelevated
-            dropdown-icon="img:https://res.cloudinary.com/practicaldev/image/fetch/s--IEXABiQR--/c_fill,f_auto,fl_progressive,h_90,q_auto,w_90/https://dev-to-uploads.s3.amazonaws.com/uploads/user/profile_image/601437/d70135df-3eab-4642-9ea6-b5ee2a489d6c.png"
+            :dropdown-icon="'img:' + this.getUser.user.user_avatar"
             style="border-radius: 50%; width: 40px; height: 40px;  overflow: hidden;"
             padding="0px"
           >
             <q-list style="width: 260px">
               <q-item clickable v-close-popup>
                 <q-item-section>
-                  <q-item-label>Photos</q-item-label>
+                  <q-item-label class="text-weight-bold">{{ getUser.user.username }}</q-item-label>
                 </q-item-section>
               </q-item>
 
@@ -108,13 +110,27 @@
 
               <q-item clickable v-close-popup>
                 <q-item-section>
-                  <q-item-label>Videos</q-item-label>
+                  <q-item-label>Dashboard</q-item-label>
                 </q-item-section>
               </q-item>
 
               <q-item clickable v-close-popup>
                 <q-item-section>
-                  <q-item-label>Articles</q-item-label>
+                  <q-item-label>Danh sách bài viết</q-item-label>
+                </q-item-section>
+              </q-item>
+              
+              <q-item clickable v-close-popup>
+                <q-item-section>
+                  <q-item-label>Cài đặt</q-item-label>
+                </q-item-section>
+              </q-item>
+              
+              <q-separator />
+              
+              <q-item clickable v-close-popup>
+                <q-item-section>
+                  <q-item-label>Đăng xuất</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -155,7 +171,10 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('user', ['getUser', 'getUserError'])
+    ...mapGetters('user', ['getUser', 'getUserError']),
+    authenticated: function () {
+      return this.getUser.authenticated
+    }
   }
 }
 </script>

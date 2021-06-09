@@ -1,6 +1,9 @@
 // Get current authenticated user
 export function getUser (state) {
-  return state.user
+  return {
+    user: state.user,
+    authenticated: state.authenticated
+  }
 }
 
 export function getUserError (state) {

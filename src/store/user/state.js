@@ -6,7 +6,8 @@ export default function () {
       id: '',
       name: '',
       email: '',
-      image: ''
-    }
+      user_avatar: ''
+    },
+    authenticated: false
   }
 }
