@@ -6,6 +6,10 @@ export function getUser (state) {
   }
 }
 
+export function getAuthenticated(state) {
+  return state.authenticated
+}
+
 export function getUserError (state) {
   return state.error
 }

@@ -1,13 +1,26 @@
-
 const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/Index.vue') },
-      { path: '/login', name: 'login',component: () => import('pages/Login.vue') },
-      { path: '/register', name: 'register', component: () => import('pages/Register.vue') },
-      { path: '/tags', name: 'tags', component: () => import('pages/Tags.vue') },
+      {
+        path: '/login',
+        name: 'login',
+        component: () => import('pages/Login.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
+      {
+        path: '/register',
+        name: 'register',
+        component: () => import('pages/Register.vue'),
+        meta: {
+          requiresAuth: true
+        }
+      },
+      { path: '/tags', name: 'tags', component: () => import('pages/Tags.vue') }
     ]
   },
 

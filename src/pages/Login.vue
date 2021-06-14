@@ -5,7 +5,7 @@
         <!-- Oauth Login -->
         <OauthProvs />
 
-        <div class="q-py-md relative-position">
+        <div class="q-py-md relative-position" @click="getUsers">
           <q-separator />
           <span
             class="text-body text-grey-8 bg-primary absolute-center text-center"
@@ -59,7 +59,6 @@
 <script>
 import { mapActions } from 'vuex'
 import OauthProvs from '../components/auth/OauthProvs.vue'
-import { api } from 'boot/axios'
 
 export default {
   components: {
@@ -72,34 +71,39 @@ export default {
     }
   },
   methods: {
-    ...mapActions('user', ['login']),
-    async onSubmit () {
+    ...mapActions('user', ['login', 'refresh']),
+    onSubmit () {
       this.login({
         email: this.email,
         password: this.password
+      }).then(() => {
+        if (this.$store.getters['user/getAuthenticated']) {
+          this.$router.push('/')
+        }
       })
     },
 
     // Refresh token incomplete
-    async refresh () {
-      try {
-        const { data } = await api.post('/refresh_tokens', {
-          accessToken: this.$q.localStorage.getItem('accessToken')
-        })
+    // async refresh () {
+    //   try {
+    //     const { data } = await api.post('/refresh_tokens', {
+    //       accessToken: this.$q.localStorage.getItem('accessToken')
+    //     })
 
-        this.$q.localStorage.set('accessToken', data.accessToken)
+    //     this.$q.localStorage.set('accessToken', data.accessToken)
 
-        console.log('new access token: ', data)
-      } catch (error) {
-        this.$q.localStorage.clear()
+    //     console.log('new access token: ', data)
+    //   } catch (error) {
+    //     this.$q.localStorage.clear()
 
-        this.$store.commit({
-          type: 'user/USER_CREDENTIALS_RESET'
-        })
-      }
-    },
+    //     this.$store.commit({
+    //       type: 'user/USER_CREDENTIALS_RESET'
+    //     })
+    //   }
+    // },
 
     async getUsers () {
+      this.refresh()
       // try {
       //   const { data } = await api.get('/users', {
       //     headers: {
@@ -114,29 +118,6 @@ export default {
 
       //   this.refresh()
       // }
-      
-
-      // this.$socket.emit('aha', { name: 'Take me on mate hahaha!!!' })
-
-      // const { data } = await this.$axios.post('http://172.28.103.241:3030/authentication', {
-      //   strategy: 'local',
-      //   email: 'test@yahoo.com',
-      //   password: 'test'
-      // })
-
-      // this.data = data
-
-      // this.$socket.on('aha2', (data) => {
-      //   if (data) {
-      //     const audio = new Audio(require('../audio/tmobile.mp3'))
-      //     audio.play()
-      //   }
-      // })
-
-      // this.$q.notify({
-      //   type: 'positive',
-      //   message: `This is a "positive" type notification.`
-      // })
     }
   }
 }

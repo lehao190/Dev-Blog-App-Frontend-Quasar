@@ -81,6 +81,10 @@ export default {
         password: this.password,
         rePassword: this.rePassword,
         user_avatar: this.user_avatar
+      }).then(() => {
+        if (this.$store.getters['user/getAuthenticated']) {
+          this.$router.push('/')
+        }
       })
     }
   }

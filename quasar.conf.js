@@ -8,7 +8,7 @@
 /* eslint-env node */
 const ESLintPlugin = require('eslint-webpack-plugin')
 
-module.exports = function (/* ctx */) {
+module.exports = function (ctx) {
   return {
     // https://v1.quasar.dev/quasar-cli/supporting-ts
     supportTS: false,
@@ -48,6 +48,11 @@ module.exports = function (/* ctx */) {
     build: {
       vueRouterMode: 'hash', // available values: 'hash', 'history'
 
+      env: {
+        API: ctx.dev
+          ? 'http://localhost:3030'
+          : 'https://prod.api.com'
+      },
       // transpile: false,
 
       // Add dependencies for transpiling with Babel (Array of string/regex)

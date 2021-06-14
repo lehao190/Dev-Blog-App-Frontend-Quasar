@@ -3,7 +3,8 @@ import { LocalStorage } from 'quasar'
 import {
   USER_CREDENTIALS_REQUEST,
   USER_CREDENTIALS_SUCCESS,
-  USER_CREDENTIALS_FAILURE
+  USER_CREDENTIALS_FAILURE,
+  USER_CREDENTIALS_RESET,
 } from '../mutation-types/userContants'
 import { handle } from '../../utils/handle_promise'
 
@@ -14,7 +15,7 @@ export async function me ({ commit }) {
   // Save access token to LocalStorage only for Oauth Authentication
   if (hashURL[1]) {
     const accessToken = hashURL[1]
-    
+
     LocalStorage.set('accessToken', accessToken)
   }
 
@@ -35,9 +36,9 @@ export async function me ({ commit }) {
     }
 
     const { data } = userData
-    
+
     LocalStorage.set('user', data)
-    
+
     user = data
   }
 
@@ -133,4 +134,27 @@ export async function register ({ commit }, payload) {
     type: USER_CREDENTIALS_SUCCESS,
     user
   })
+}
+
+export async function refresh ({ commit }, payload) {
+  const [data, error] = await handle(
+    api.post('/refresh_tokens', {
+      accessToken: LocalStorage.getItem('accessToken')
+    })
+  )
+
+  if (error) {
+    console.log('refresh error: ', error)
+
+    LocalStorage.clear()
+
+    return commit({
+      type: USER_CREDENTIALS_RESET,
+      error: error.response
+    })
+  }
+
+  console.log('from refresh Endpoint: ', data)
+
+  LocalStorage.set('accessToken', data.data.accessToken)
 }
