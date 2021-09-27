@@ -20,7 +20,16 @@ const routes = [
           requiresAuth: true
         }
       },
-      { path: '/tags', name: 'tags', component: () => import('pages/Tags.vue') }
+      {
+        path: '/tags',
+        name: 'tags',
+        component: () => import('pages/Tags.vue')
+      },
+      {
+        path: '/create_post',
+        name: 'create_post',
+        component: () => import('pages/CreatePost.vue')
+      }
     ]
   },
 
@@ -30,6 +39,6 @@ const routes = [
     path: '*',
     component: () => import('pages/Error404.vue')
   }
-]
+];
 
-export default routes
+export default routes;

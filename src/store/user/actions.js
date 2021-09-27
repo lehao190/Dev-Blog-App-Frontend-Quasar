@@ -136,6 +136,7 @@ export async function register ({ commit }, payload) {
   })
 }
 
+// Refresh the existing token
 export async function refresh ({ commit }, payload) {
   const [data, error] = await handle(
     api.post('/refresh_tokens', {
@@ -157,4 +158,22 @@ export async function refresh ({ commit }, payload) {
   console.log('from refresh Endpoint: ', data)
 
   LocalStorage.set('accessToken', data.data.accessToken)
+}
+
+// Log user out
+export async function logout ({ commit }) {
+  const [data, error] = await handle(api.post('logout'))
+
+  if (error) {
+    return commit({
+      type: USER_CREDENTIALS_RESET,
+      error: error.response
+    })
+  }
+
+  LocalStorage.clear()
+
+  commit({
+    type: USER_CREDENTIALS_RESET       
+  })
 }

@@ -128,8 +128,9 @@
               
               <q-separator />
               
+              <!-- Logout -->
               <q-item clickable v-close-popup>
-                <q-item-section>
+                <q-item-section @click="onLogout">
                   <q-item-label>Đăng xuất</q-item-label>
                 </q-item-section>
               </q-item>
@@ -155,7 +156,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import IntroSec from '../components/home_page/IntroSec'
 import UserNav from '../components/home_page/UserNav'
 
@@ -174,6 +175,12 @@ export default {
     ...mapGetters('user', ['getUser', 'getUserError']),
     authenticated: function () {
       return this.getUser.authenticated
+    }
+  },
+  methods: {
+    ...mapActions('user', ['logout']),
+    onLogout () {
+      this.logout()
     }
   }
 }
