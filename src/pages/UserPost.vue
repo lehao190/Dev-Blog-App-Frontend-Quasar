@@ -32,6 +32,7 @@
 
       <!-- Markdown Post Content Section -->
       <div class="col bg-white text-h2 rounded-borders">
+        Take on me
         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Quae soluta
         pariatur iure numquam neque quam ducimus dolore quos ipsum laborum,
         maxime sunt enim eveniet aut ea quasi sed labore consequatur? Lorem
