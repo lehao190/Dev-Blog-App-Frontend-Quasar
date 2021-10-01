@@ -29,6 +29,16 @@ const routes = [
         path: '/create_post',
         name: 'create_post',
         component: () => import('pages/CreatePost.vue')
+      },
+      {
+        path: '/users/:id',
+        name: 'user_profile',
+        component: () => import('pages/UserProfile.vue')
+      },
+      {
+        path: '/users/edit/:id',
+        name: 'edit_profile',
+        component: () => import('pages/EditProfile.vue')
       }
     ]
   },
