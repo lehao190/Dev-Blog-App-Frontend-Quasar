@@ -14,6 +14,42 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
 
+h1 {
+  font-size: 1.75em;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 1.5em;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 1.25em;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+h4 {
+  font-size: 1em;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+h5 {
+  font-size: 0.875em;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
+h6 {
+  font-size: 0.85em;
+  line-height: 1.25;
+  font-weight: 600;
+}
+
 img {
   width: 100%;
   height: 100%;
@@ -39,6 +75,21 @@ a:hover {
 
 .main-wrapper {
   max-width: 1280px;
+  margin: 0 auto;
+}
+
+.user-profile-wrapper {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.post-wrapper {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.edit-wrapper {
+  max-width: 660px;
   margin: 0 auto;
 }
 
