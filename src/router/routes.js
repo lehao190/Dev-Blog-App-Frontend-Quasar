@@ -44,6 +44,11 @@ const routes = [
         path: '/users/edit/:id',
         name: 'edit_profile',
         component: () => import('pages/EditProfile.vue')
+      },
+      {
+        path: '/dashboard',
+        name: 'dashboard',
+        component: () => import('pages/Dashboard.vue')
       }
     ]
   },
