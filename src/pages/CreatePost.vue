@@ -65,7 +65,7 @@
                 :input-style="{
                   lineHeight: '1'
                 }"
-                v-model="text"
+                v-model="body"
                 placeholder="Viết nội dung bài viết bằng ngôn ngữ MARKDOWN ở đây..."
                 borderless
                 type="textarea"
@@ -79,26 +79,28 @@
       <!-- Preview Section -->
       <div v-if="preview === 'preview'" class="bg-white rounded-borders">
         <q-scroll-area class="q-pa-lg" style="height: 550px;">
-           <vue-markdown :source="text"/>
+           <vue-markdown :source="body"/>
         </q-scroll-area>
       </div>
 
       <!-- Publish Post -->
       <div class="q-pt-md">
-        <q-btn class="text-bold" color="secondary" label="Xuất bản" />
+        <q-btn @click="onSubmit" class="text-bold" color="secondary" label="Xuất bản" />
       </div>
     </div>
   </q-page>
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
 import VueMarkdown from 'vue-markdown';
+import { LocalStorage } from 'quasar'
 
 export default {
   data() {
     return {
       title: '',
-      text: '',
+      body: '',
       preview: 'noPreview',
       file: null,
       multiple: null,
@@ -108,12 +110,21 @@ export default {
   components: {
     VueMarkdown
   },
+  computed: {
+    ...mapGetters('user', ['getUser']),
+  },
   methods: {
-    onClick() {
-      // console.log(this.multiple);
-      // console.log(this.options);
-      // console.log(this.text);
+    ...mapActions('posts', ['createPost']),
+    onSubmit() {
       // console.log(JSON.stringify(this.text));
+      const token = LocalStorage.getItem('accessToken')
+    
+      this.createPost({
+        title: this.title,
+        body: this.body,
+        userId: this.getUser.user.id,
+        token
+      })
     }
   }
 };

@@ -77,10 +77,11 @@
 
           <!-- Text Markdown Body -->
           <div>
-            If you've used React Router on many projects, definitely you've
+            <!-- If you've used React Router on many projects, definitely you've
             asked How i can pass some data or state to other components through
             a link tag?. So 1st of all we'll discuss how we can pass data
-            between components in React.
+            between components in React. -->
+            <vue-markdown :source="text" />
           </div>
         </div>
 
@@ -178,9 +179,25 @@
 </template>
 
 <script>
+import VueMarkdown from 'vue-markdown';
+
 export default {
+  // mounted() {
+  //   this.$store
+  //     .dispatch({
+  //       type: 'posts/requestAllPosts'
+  //     })
+  //     .then(() => {
+  //       const posts = this.$store.getters['posts/getPosts'];
+  //       console.log('this is your POSTS: ', posts.posts);
+
+  //       this.text = posts.posts.data[1].body
+  //       console.log('text: ', this.text)
+  //     });
+  // },
   data() {
     return {
+      text: '',
       imgURL:
         'https://res.cloudinary.com/practicaldev/image/fetch/s--1iRZ0zp5--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/qguojwfs9v19sxwlvq50.png',
       imgURL2:
@@ -188,6 +205,9 @@ export default {
       imgURL3:
         'https://res.cloudinary.com/practicaldev/image/fetch/s--xklWbgTW--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/lfralq4h4hu41p6uys3i.jpeg'
     };
+  },
+  components: {
+    VueMarkdown
   }
 };
 </script>

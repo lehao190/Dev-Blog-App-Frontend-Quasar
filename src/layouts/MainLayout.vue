@@ -83,6 +83,7 @@
             class="text-weight-bold"
             color="secondary"
             type="a"
+            href="http://localhost:8080/#/create_post"
             label="Tạo Bài Viết"
             text-color="primary"
             no-caps
