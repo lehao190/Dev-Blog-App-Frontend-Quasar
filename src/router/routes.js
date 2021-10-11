@@ -49,7 +49,17 @@ const routes = [
         path: '/dashboard',
         name: 'dashboard',
         component: () => import('pages/Dashboard.vue')
-      }
+      },
+      {
+        path: '/create_tag',
+        name: 'create_tag',
+        component: () => import('pages/CreateTag.vue')
+      },
+      {
+        path: '/tags/edit/:id',
+        name: 'edit_tag',
+        component: () => import('pages/EditTag.vue')
+      },
     ]
   },
 

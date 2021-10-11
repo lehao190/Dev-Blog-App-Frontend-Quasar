@@ -77,10 +77,11 @@
 
           <!-- Text Markdown Body -->
           <div>
-            <!-- If you've used React Router on many projects, definitely you've
+            If you've used React Router on many projects, definitely you've
             asked How i can pass some data or state to other components through
             a link tag?. So 1st of all we'll discuss how we can pass data
-            between components in React. -->
+            between components in React.
+            
             <vue-markdown :source="text" />
           </div>
         </div>

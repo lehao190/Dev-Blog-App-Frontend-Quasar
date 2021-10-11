@@ -12,7 +12,7 @@
     <template v-slot:body-cell-name="props">
       <q-td :props="props">
         <div class="my-table-details text-bold">
-          <router-link to="/users/edit/a">
+          <router-link to="/tags/edit/a">
             {{ props.row.details }}
           </router-link>
         </div>
@@ -56,7 +56,7 @@ export default {
           label: 'ID thẻ',
           field: 'calories'
         },
-        { name: 'fat', label: 'Người tạo', field: 'fat', align: 'center' },
+        { name: 'fat', label: 'Icon', field: 'fat', align: 'center' },
         { name: 'carbs', label: 'Tạo lúc', field: 'carbs', align: 'center' },
         { name: 'protein', label: 'Sửa lúc', field: 'protein', align: 'center' }
       ],
@@ -67,7 +67,7 @@ export default {
           details:
             'Javascript This is me mate aha take on me in adday orRRRRR TWWOOOOWOWOWOOWOWO',
           calories: 234,
-          fat: 6.0,
+          fat: 'fas fa-js',
           carbs: '2/4/2021',
           protein: '5/9/2021'
         },
@@ -75,7 +75,7 @@ export default {
           name: 'Dante',
           details: 'Dante',
           calories: 234,
-          fat: 6.0,
+          fat: 'fas fa-js',
           carbs: '2/4/2021',
           protein: '5/9/2021'
         },
@@ -83,7 +83,7 @@ export default {
           name: 'Son',
           details: 'Im a SUPER SAIYAN SOOONNNN GOKU !!!',
           calories: 234,
-          fat: 6.0,
+          fat: 'fas fa-js',
           carbs: '2/4/2021',
           protein: '5/9/2021'
         },
@@ -91,7 +91,7 @@ export default {
           name: 'Vergil',
           details: 'Vergil (Sparda)',
           calories: 234,
-          fat: 6.0,
+          fat: 'fas fa-js',
           carbs: '2/4/2021',
           protein: '5/9/2021'
         }

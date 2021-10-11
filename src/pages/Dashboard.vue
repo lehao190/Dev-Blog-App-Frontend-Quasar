@@ -36,15 +36,6 @@
         />
 
         <q-btn
-          @click="tableOption = 'followed_tag'"
-          class="full-width bg-accent text-weight-thin"
-          unelevated
-          align="left"
-          label="Thẻ đang theo dõi"
-          no-caps
-        />
-
-        <q-btn
           @click="tableOption = 'user'"
           class="full-width bg-accent text-weight-thin"
           unelevated
@@ -59,11 +50,13 @@
         <div class="row">
           <div class="text-right q-mr-xs q-mb-sm q-gutter-sm col-12">
             <q-btn
+              v-if="tableOption !== 'saved_post' && tableOption !== 'user'"
               class="text-bold"
               color="secondary"
               icon="add"
               label="Tạo"
               no-caps
+              @click="onCreate"
             />
             <q-btn
               class="text-bold"
@@ -71,15 +64,16 @@
               icon="clear"
               label="Xóa"
               no-caps
+              @click="onDelete"
             />
           </div>
 
           <div class="col-12">
             <TagTable v-if="this.tableOption === 'tag'" />
-            <FollowedTagTable v-if="this.tableOption === 'followed_tag'" />
             <UserTable v-if="this.tableOption === 'user'" />
             <PostTable v-if="this.tableOption === 'post'" />
             <SavedPostTable v-if="this.tableOption === 'saved_post'" />
+            <!-- <FollowedTagTable v-if="this.tableOption === 'followed_tag'" /> -->
           </div>
         </div>
       </div>
@@ -89,7 +83,7 @@
 
 <script>
 import TagTable from '../components/dashboard/TagTable.vue';
-import FollowedTagTable from '../components/dashboard/FollowedTagTable.vue';
+// import FollowedTagTable from '../components/dashboard/FollowedTagTable.vue';
 import PostTable from '../components/dashboard/PostTable.vue';
 import SavedPostTable from '../components/dashboard/SavedPostTable.vue';
 import UserTable from '../components/dashboard/UserTable.vue';
@@ -102,10 +96,32 @@ export default {
   },
   components: {
     TagTable,
-    FollowedTagTable,
+    // FollowedTagTable,
     PostTable,
     SavedPostTable,
     UserTable
+  },
+  methods: {
+    onCreate () {
+      if (this.tableOption === 'tag') {
+        return this.$router.push('/create_tag')
+      } else {
+        return this.$router.push('/create_post')
+      }
+    },
+    onDelete () {
+      if (this.tableOption === 'user') {
+        return console.log('Delete user')
+      }
+      if (this.tableOption === 'tag') {
+        return console.log('Delete tag')
+      }
+      if (this.tableOption === 'post') {
+        return console.log('Delete post')
+      }
+      
+      console.log('Delete Saved post')
+    }
   }
 };
 </script>
