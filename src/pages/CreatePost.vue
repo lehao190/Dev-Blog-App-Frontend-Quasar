@@ -115,7 +115,7 @@ export default {
   },
   methods: {
     ...mapActions('posts', ['createPost']),
-    onSubmit() {
+    onSubmit () {
       // console.log(JSON.stringify(this.text));
       const token = LocalStorage.getItem('accessToken')
     

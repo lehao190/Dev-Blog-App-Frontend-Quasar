@@ -5,15 +5,15 @@
     selection="multiple"
     :selected.sync="selected"
     :columns="columns"
-    row-key="name"
+    row-key="tag_name"
     hide-no-data
     wrap-cells
   >
     <template v-slot:body-cell-name="props">
       <q-td :props="props">
         <div class="my-table-details text-bold">
-          <router-link to="/tags/edit/a">
-            {{ props.row.details }}
+          <router-link :to="'/tags/edit/' + props.row.id">
+            {{ props.row.tag_name }}
           </router-link>
         </div>
       </q-td>
@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
+
 export default {
   // created() {
   //   // if (window.innerWidth <= 600) {
@@ -37,6 +39,12 @@ export default {
   //     console.log('Destroyed Linstener !!!')
   //   })
   // },
+
+  async mounted() {
+    await this.getAllTags()
+    this.data = this.getTags.tags
+  },
+
   data() {
     return {
       isGrid: false,
@@ -47,58 +55,40 @@ export default {
           required: true,
           label: 'Thẻ',
           align: 'left',
-          field: row => row.name,
+          field: row => row.tag_name,
           format: val => `${val}`
         },
         {
-          name: 'calories',
+          name: 'id',
           align: 'center',
           label: 'ID thẻ',
-          field: 'calories'
+          field: 'id'
         },
-        { name: 'fat', label: 'Icon', field: 'fat', align: 'center' },
-        { name: 'carbs', label: 'Tạo lúc', field: 'carbs', align: 'center' },
-        { name: 'protein', label: 'Sửa lúc', field: 'protein', align: 'center' }
-      ],
-
-      data: [
+        { name: 'tag_icon', label: 'Icon', field: 'tag_icon', align: 'center' },
         {
-          name: 'Frozenasd Yogurt',
-          details:
-            'Javascript This is me mate aha take on me in adday orRRRRR TWWOOOOWOWOWOOWOWO',
-          calories: 234,
-          fat: 'fas fa-js',
-          carbs: '2/4/2021',
-          protein: '5/9/2021'
+          name: 'created_at',
+          label: 'Tạo lúc',
+          field: 'created_at',
+          align: 'center'
         },
         {
-          name: 'Dante',
-          details: 'Dante',
-          calories: 234,
-          fat: 'fas fa-js',
-          carbs: '2/4/2021',
-          protein: '5/9/2021'
-        },
-        {
-          name: 'Son',
-          details: 'Im a SUPER SAIYAN SOOONNNN GOKU !!!',
-          calories: 234,
-          fat: 'fas fa-js',
-          carbs: '2/4/2021',
-          protein: '5/9/2021'
-        },
-        {
-          name: 'Vergil',
-          details: 'Vergil (Sparda)',
-          calories: 234,
-          fat: 'fas fa-js',
-          carbs: '2/4/2021',
-          protein: '5/9/2021'
+          name: 'updated_at',
+          label: 'Sửa lúc',
+          field: 'updated_at',
+          align: 'center'
         }
-      ]
+      ],
+      data: []
     };
   },
+
+  computed: {
+    ...mapGetters('tags', ['getTags'])
+  },
+
   methods: {
+    ...mapActions('tags', ['getAllTags']),
+
     getSelectedString() {
       return this.selected.length === 0
         ? ''

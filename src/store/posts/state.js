@@ -12,6 +12,7 @@ export default function() {
         tags: [],
         saved: false,
         created_at: '',
+        updated_at: '',
         user: {
           username: '',
           user_avatar: ''
@@ -28,6 +29,7 @@ export default function() {
       saved: false,
       liked: false,
       created_at: '',
+      updated_at: '',
       user: {
         username: '',
         user_avatar: ''

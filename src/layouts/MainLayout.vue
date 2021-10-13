@@ -111,7 +111,7 @@
 
               <q-item clickable v-close-popup>
                 <q-item-section>
-                  <q-item-label>Dashboard</q-item-label>
+                  <q-item-label><router-link class="full-width" to="/dashboard">Dashboard</router-link></q-item-label>
                 </q-item-section>
               </q-item>
 

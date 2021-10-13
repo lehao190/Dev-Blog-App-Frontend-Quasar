@@ -1,0 +1,4 @@
+export const TAGS_REQUEST = 'TAGS_REQUEST'
+export const TAGS_SUCCESS = 'TAGS_SUCCESS'
+export const TAGS_FAILURE = 'TAGS_FAILURE'
+export const TAGS_RESET = 'TAGS_RESET'
