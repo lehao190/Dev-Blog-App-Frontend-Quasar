@@ -108,7 +108,7 @@ export async function createTag({ commit }, payload) {
 // Edit Tag
 export async function editTag({ commit }, payload) {
   const { tagId, tagName, tagIcon, token } = payload;
-  
+
   commit({
     type: TAGS_REQUEST
   });
@@ -142,5 +142,58 @@ export async function editTag({ commit }, payload) {
   commit({
     type: TAGS_SUCCESS,
     tags: data
+  });
+}
+
+// Delete one or multiple tags
+export async function deleteTags({ commit }, payload) {
+  const { tags, token } = payload;
+
+  commit({
+    type: TAGS_REQUEST
+  });
+
+  let tagURL = '/tags';
+
+  if (tags.length === 1) {
+    tagURL = tagURL + `/${tags[0].id}`;
+  }
+
+  if (tags.length > 1) {
+    for (let i = 0; i < tags.length; i++) {
+      if (i === 0) {
+        tagURL = tagURL + `?id[$in]=${tags[i].id}`;
+      } else {
+        tagURL = tagURL + `&id[$in]=${tags[i].id}`;
+      }
+    }
+  }
+
+  // console.log('tag URL 2: ', tagURL);
+
+
+  const [tagsData, tagsError] = await handle(
+    api.delete(`${tagURL}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+  );
+
+  if (tagsError) {
+    commit({
+      type: TAGS_FAILURE,
+      error: tagsError.response
+    });
+
+    throw tagsError.response;
+  }
+
+  const { data } = tagsData;
+
+  commit({
+    type: TAGS_SUCCESS,
+    tags: data,
+    method: 'delete'
   });
 }

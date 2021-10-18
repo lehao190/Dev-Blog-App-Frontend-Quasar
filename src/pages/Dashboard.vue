@@ -69,7 +69,12 @@
           </div>
 
           <div class="col-12">
-            <TagTable v-if="this.tableOption === 'tag'" />
+            <TagTable
+              @selectedTags="onSelectedItems"
+              @unsetReset="unset"
+              :reset="reset"
+              v-if="this.tableOption === 'tag'"
+            />
             <UserTable v-if="this.tableOption === 'user'" />
             <PostTable v-if="this.tableOption === 'post'" />
             <SavedPostTable v-if="this.tableOption === 'saved_post'" />
@@ -88,12 +93,22 @@ import PostTable from '../components/dashboard/PostTable.vue';
 import SavedPostTable from '../components/dashboard/SavedPostTable.vue';
 import UserTable from '../components/dashboard/UserTable.vue';
 
+import { mapActions, mapGetters } from 'vuex';
+import { LocalStorage } from 'quasar';
+
 export default {
   data() {
     return {
-      tableOption: 'tag'
+      tableOption: 'tag',
+      selectedItems: [],
+      reset: false
     };
   },
+
+  computed: {
+    ...mapGetters('tags', ['getTags'])
+  },
+
   components: {
     TagTable,
     // FollowedTagTable,
@@ -102,25 +117,49 @@ export default {
     UserTable
   },
   methods: {
-    onCreate () {
+    ...mapActions('tags', ['deleteTags']),
+
+    onSelectedItems(value) {
+      this.selectedItems = value;
+    },
+
+    unset(value) {
+      this.reset = value;
+    },
+
+    // Create tags, posts
+    onCreate() {
       if (this.tableOption === 'tag') {
-        return this.$router.push('/create_tag')
+        return this.$router.push('/create_tag');
       } else {
-        return this.$router.push('/create_post')
+        return this.$router.push('/create_post');
       }
     },
-    onDelete () {
+
+    // Delete posts, users, tags...
+    onDelete() {
+      const token = LocalStorage.getItem('accessToken');
+
       if (this.tableOption === 'user') {
-        return console.log('Delete user')
+        return console.log('Delete user');
       }
+
       if (this.tableOption === 'tag') {
-        return console.log('Delete tag')
+        this.deleteTags({
+          token,
+          tags: this.selectedItems
+        });
+
+        return (this.reset = true);
       }
+
       if (this.tableOption === 'post') {
-        return console.log('Delete post')
+        return console.log('Delete post');
       }
-      
-      console.log('Delete Saved post')
+
+      if (this.tableOption === 'saved_post') {
+        console.log('Delete Saved Post');
+      }
     }
   }
 };

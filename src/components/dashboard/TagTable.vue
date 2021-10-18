@@ -1,13 +1,14 @@
 <template>
   <q-table
     :grid="isGrid"
-    :data="data"
+    :data="getTags.tags"
     selection="multiple"
     :selected.sync="selected"
     :columns="columns"
     row-key="tag_name"
     hide-no-data
     wrap-cells
+    @update:selected="onSelected"
   >
     <template v-slot:body-cell-name="props">
       <q-td :props="props">
@@ -41,9 +42,17 @@ export default {
   // },
 
   async mounted() {
-    await this.getAllTags()
-    this.data = this.getTags.tags
+    await this.getAllTags();
+    // this.data = this.getTags.tags;
+
+    // window.addEventListener('change', this.onSelected);
   },
+
+  beforeDestroy() {
+    // window.removeEventListener('change', this.onSelected);
+  },
+
+  props: ['reset'],
 
   data() {
     return {
@@ -86,8 +95,22 @@ export default {
     ...mapGetters('tags', ['getTags'])
   },
 
+  watch: {
+    reset (newVal) {
+      if (newVal === true) {
+        this.selected = []
+
+        this.$emit('unsetReset', false)
+      }
+    }
+  },
+
   methods: {
     ...mapActions('tags', ['getAllTags']),
+
+    onSelected(newSelected) {
+      this.$emit('selectedTags', newSelected)
+    },
 
     getSelectedString() {
       return this.selected.length === 0

@@ -5,7 +5,7 @@
 
       <q-card-section class="bg-primary text-black relative-position">
         <div class="text-subtitle1 text-weight-bold">
-          <router-link to="javascript">#javascript</router-link>
+          #javascript
         </div>
         <div class="text-subtitle2 q-my-sm">
           Once relegated to the browser as one of the 3 core technologies of the

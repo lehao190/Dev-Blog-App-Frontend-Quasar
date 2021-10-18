@@ -104,7 +104,7 @@ export default {
       preview: 'noPreview',
       file: null,
       multiple: null,
-      options: ['Google', 'Facebook', 'Twitter', 'Apple', 'Oracle']
+      options: ['#Google', 'Facebook', 'Twitter', 'Apple', 'Oracle']
     };
   },
   components: {
