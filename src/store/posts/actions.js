@@ -32,7 +32,15 @@ export async function requestAllPosts({ commit }) {
 
 // Create Post
 export async function createPost({ commit }, payload) {
-  const { title, body, userId, token } = payload
+  const { title, body, coverImage, selectedOptions, userId, token } = payload
+  
+  const tags = []
+
+  const formData = new FormData()
+  formData.append('title', title)
+  formData.append('body', body)
+  formData.append('post_image', coverImage)
+  formData.append('userId', userId)
 
   commit({
     type: POSTS_REQUEST
@@ -41,11 +49,7 @@ export async function createPost({ commit }, payload) {
   const [postData, postError] = await handle(
     api.post(
       '/posts',
-      {
-        title,
-        body,
-        userId
-      },
+      formData,
       {
         headers: {
           Authorization: `Bearer ${token}`
@@ -55,10 +59,40 @@ export async function createPost({ commit }, payload) {
   );
 
   if (postError) {
-    return commit({
+    commit({
       type: POSTS_FAILURE,
       error: postError.response
     })
+
+    throw postError.response
+  }
+
+  selectedOptions.forEach(option => {
+    tags.push({
+      tagId: option.id,
+      postId: postData.data.id
+    })
+  })
+
+  const [postTagData, postTagError] = await handle(
+    api.post(
+      '/tags-posts',
+      tags,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+  );
+
+  if (postTagError) {
+    commit({
+      type: POSTS_FAILURE,
+      error: postTagError.response
+    })
+
+    throw postTagError.response
   }
 
   commit({
