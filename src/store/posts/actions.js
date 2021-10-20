@@ -13,7 +13,7 @@ export async function requestAllPosts({ commit }) {
     type: POSTS_REQUEST
   });
 
-  const [postsData, postsError] = await handle(api.get('/posts'));
+  const [postsData, postsError] = await handle(api.get('/posts?$sort[created_at]=-1'));
 
   if (postsError) {
     commit({
@@ -26,7 +26,7 @@ export async function requestAllPosts({ commit }) {
 
   commit({
     type: POSTS_SUCCESS,
-    posts: data
+    posts: data.data
   });
 }
 

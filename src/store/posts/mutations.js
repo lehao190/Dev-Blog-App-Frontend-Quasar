@@ -17,8 +17,6 @@ export function POSTS_FAILURE(state, payload) {
 export function POSTS_SUCCESS(state, payload) {
   state.loading = false;
   state.error = {};
-  
-  console.log('This is POSTS_SUCCESS Mutation: ', payload)
 
   if (payload.posts) {
     state.posts = payload.posts;

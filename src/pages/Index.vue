@@ -19,9 +19,10 @@
 
         <!-- Post Section -->
         <section>
-          <Post/>
-          <Post/>
-          <Post/>
+          <Post v-for="post in posts" :key="post.id" :post="post" />
+
+          <!-- <Post/>
+          <Post/> -->
         </section>
       </div>
 
@@ -43,20 +44,40 @@
 </template>
 
 <script>
-import IntroSec from '../components/home_page/IntroSec'
-import UserNav from '../components/home_page/UserNav'
-import UserNavTag from '../components/home_page/UserNavTag'
-import PinnedPost from '../components/home_page/PinnedPost'
-import Post from '../components/home_page/Post'
+import IntroSec from '../components/home_page/IntroSec';
+import UserNav from '../components/home_page/UserNav';
+import UserNavTag from '../components/home_page/UserNavTag';
+import PinnedPost from '../components/home_page/PinnedPost';
+import Post from '../components/home_page/Post';
+
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
   name: 'PageIndex',
+
   components: {
     IntroSec,
     UserNav,
     UserNavTag,
     PinnedPost,
     Post
+  },
+
+  data() {
+    return {
+      posts: []
+    };
+  },
+  computed: {
+    ...mapGetters('posts', ['getPosts'])
+  },
+
+  mounted() {
+    this.requestAllPosts().then(() => (this.posts = this.getPosts.posts));
+  },
+
+  methods: {
+    ...mapActions('posts', ['requestAllPosts'])
   }
-}
+};
 </script>

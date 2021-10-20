@@ -19,9 +19,6 @@ export function TAGS_SUCCESS(state, payload) {
 
   if (payload.tags) {
     if (payload.method === 'delete') {
-      // console.log('payload: ', payload.tags);
-      // console.log('items: ', state.tags);
-
       if (!payload.tags.length) {
         payload.tags = [payload.tags]
       }
@@ -31,9 +28,7 @@ export function TAGS_SUCCESS(state, payload) {
           return tag.id !== removedTag.id;
         });
       });
-
-      // console.log('removed tags: ', state.tags)
-
+      
       return state.tags
     }
 

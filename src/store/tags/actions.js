@@ -169,9 +169,6 @@ export async function deleteTags({ commit }, payload) {
     }
   }
 
-  // console.log('tag URL 2: ', tagURL);
-
-
   const [tagsData, tagsError] = await handle(
     api.delete(`${tagURL}`, {
       headers: {

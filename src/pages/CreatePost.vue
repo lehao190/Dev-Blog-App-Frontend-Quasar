@@ -178,10 +178,10 @@ export default {
         .catch(e => {
           console.log('Error Post: ', e);
 
-          // this.$q.notify({
-          //   type: 'negative',
-          //   message: e.data.errors.tag_name
-          // });
+          this.$q.notify({
+            type: 'negative',
+            message: 'Lỗi đã xảy ra không thể tạo bài viết!'
+          });
         });
     }
   }
