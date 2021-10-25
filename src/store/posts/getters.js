@@ -6,9 +6,9 @@ export function getPosts(state) {
 }
 
 // Get Post
-export function getPost(state) {
+export function getOnePost(state) {
   return {
-    posts: state.post
+    post: state.post
   };
 }
 

@@ -10,7 +10,7 @@
     <q-card-section>
       <div class="relative-position q-gutter-sm">
         <!-- User's Avatar -->
-        <router-link to="user">
+        <router-link :to="'/users/' + post.userId">
           <q-avatar size="lg">
             <img :src="post.user_profile.user_avatar" />
           </q-avatar>
@@ -19,12 +19,12 @@
         <!-- User's Post creation date -->
         <span class="absolute text-caption">
           <div>
-            <router-link class="text-grey-8" to="about">{{
+            <router-link class="text-grey-8" :to="'/users/' + post.userId">{{
               post.user_profile.username
             }}</router-link>
           </div>
           <div>
-            <router-link class="text-grey-8" to="date">{{
+            <router-link class="text-grey-8" :to="'/posts/' + post.id">{{
               post.created_at
             }}</router-link>
           </div>
@@ -33,7 +33,7 @@
 
       <!-- User's Post Title -->
       <div class="q-pl-xl">
-        <router-link to="posts/a"
+        <router-link :to="'/posts/' + post.id"
           ><div class="text-h5 q-mt-sm q-mb-xs user-post-text">
             {{ post.title }}
           </div></router-link

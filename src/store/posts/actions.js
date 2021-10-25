@@ -13,7 +13,9 @@ export async function requestAllPosts({ commit }) {
     type: POSTS_REQUEST
   });
 
-  const [postsData, postsError] = await handle(api.get('/posts?$sort[created_at]=-1'));
+  const [postsData, postsError] = await handle(
+    api.get('/posts?$sort[created_at]=-1')
+  );
 
   if (postsError) {
     commit({
@@ -30,73 +32,233 @@ export async function requestAllPosts({ commit }) {
   });
 }
 
+// Get post
+export async function getPost({ commit }, payload) {
+  const { postId } = payload;
+
+  commit({
+    type: POSTS_REQUEST
+  });
+
+  const [postData, postError] = await handle(api.get(`/posts/${postId}`));
+
+  if (postError) {
+    commit({
+      type: POSTS_FAILURE,
+      error: postError.response
+    });
+
+    throw postError.response;
+  }
+
+  const { data } = postData;
+
+  commit({
+    type: POSTS_SUCCESS,
+    post: data
+  });
+}
+
 // Create Post
 export async function createPost({ commit }, payload) {
-  const { title, body, coverImage, selectedOptions, userId, token } = payload
-  
-  const tags = []
+  const { title, body, coverImage, selectedOptions, userId, token } = payload;
 
-  const formData = new FormData()
-  formData.append('title', title)
-  formData.append('body', body)
-  formData.append('post_image', coverImage)
-  formData.append('userId', userId)
+  const tags = [];
+
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('body', body);
+  formData.append('post_image', coverImage);
+  formData.append('userId', userId);
 
   commit({
     type: POSTS_REQUEST
   });
 
   const [postData, postError] = await handle(
-    api.post(
-      '/posts',
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+    api.post('/posts', formData, {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-    )
+    })
   );
 
   if (postError) {
     commit({
       type: POSTS_FAILURE,
       error: postError.response
-    })
+    });
 
-    throw postError.response
+    throw postError.response;
   }
 
   selectedOptions.forEach(option => {
     tags.push({
       tagId: option.id,
       postId: postData.data.id
-    })
-  })
+    });
+  });
 
   const [postTagData, postTagError] = await handle(
-    api.post(
-      '/tags-posts',
-      tags,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+    api.post('/tags-posts', tags, {
+      headers: {
+        Authorization: `Bearer ${token}`
       }
-    )
+    })
   );
 
   if (postTagError) {
     commit({
       type: POSTS_FAILURE,
       error: postTagError.response
-    })
+    });
 
-    throw postTagError.response
+    throw postTagError.response;
   }
 
   commit({
     type: POSTS_SUCCESS,
     post: postData
-  })
+  });
+}
+
+// Like Post
+export async function likePost({ commit }, payload) {
+  const { postId, userId, token, likes, post } = payload;
+
+  commit({
+    type: POSTS_REQUEST
+  });
+
+  if (post.authUserLiked) {
+    const [removeLikeData, removeLikeError] = await handle(
+      api.delete(`/likes?userId=${userId}&postId=${postId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+    );
+
+    if (removeLikeError) {
+      commit({
+        type: POSTS_FAILURE,
+        error: removeLikeError.response
+      });
+
+      throw removeLikeError.response;
+    }
+
+    const [patchLikePostData, patchLikePostError] = await handle(
+      api.patch(
+        `/posts/${postId}`,
+        {
+          count_likes: likes - 1
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+    );
+
+    if (patchLikePostError) {
+      commit({
+        type: POSTS_FAILURE,
+        error: patchLikePostError.response
+      });
+
+      throw patchLikePostError.response;
+    }
+
+    commit({
+      type: POSTS_SUCCESS,
+      post: {
+        ...post,
+        count_likes: likes - 1,
+        authUserLiked: false
+      }
+    });
+  } else {
+    const [postlikeData, postlikeError] = await handle(
+      api.post(
+        `/likes`,
+        {
+          postId,
+          userId
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+    );
+
+    if (postlikeError) {
+      commit({
+        type: POSTS_FAILURE,
+        error: postlikeError.response
+      });
+
+      throw postlikeError.response;
+    }
+
+    commit({
+      type: POSTS_SUCCESS,
+      post: {
+        ...post,
+        count_likes: likes + 1,
+        authUserLiked: true
+      }
+    });
+  }
+}
+
+// authenticated user liked post
+export async function getAuthUserLikePost({ commit }, payload) {
+  const { userId, postId, token, post } = payload;
+
+  commit({
+    type: POSTS_REQUEST
+  });
+
+  const [postlikeData, postlikeError] = await handle(
+    api.get(`/likes?userId=${userId}&postId=${postId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+  );
+
+  if (postlikeError) {
+    commit({
+      type: POSTS_FAILURE,
+      error: postlikeError.response
+    });
+
+    throw postlikeError.response;
+  }
+
+  const {
+    data: { data }
+  } = postlikeData;
+
+  if (data[0]) {
+    commit({
+      type: POSTS_SUCCESS,
+      post: {
+        ...post,
+        authUserLiked: true
+      }
+    });
+  } else {
+    commit({
+      type: POSTS_SUCCESS,
+      post: {
+        ...post,
+        authUserLiked: false
+      }
+    });
+  }
 }

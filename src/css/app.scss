@@ -114,3 +114,13 @@ pre {
   background-color: rgb(236, 236, 236);
   padding: 20px;
 }
+
+.markdown-body {
+  p {
+    img {
+      padding: 10px 200px;
+      width: 100%;
+      height: 300px;
+    }
+  }
+}

@@ -85,7 +85,9 @@
       <!-- Preview Section -->
       <div v-if="preview === 'preview'" class="bg-white rounded-borders">
         <q-scroll-area class="q-pa-lg" style="height: 550px;">
-          <vue-markdown :source="body" />
+          <div class="markdown-body">
+            <vue-markdown :source="body" />
+          </div>
         </q-scroll-area>
       </div>
 

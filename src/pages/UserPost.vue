@@ -9,14 +9,15 @@
           style="top: 130px; margin-left: 25px;"
         >
           <q-btn
+            @click="onLike"
             round
             size="22px"
             unelevated
-            :color="1 === 1 ? 'accent' : 'blue'"
-            :text-color="1 === 1 ? 'grey' : 'blue'"
+            :color="1 === 1 ? 'accent' : 'red'"
+            :text-color="!this.authUserLiked ? 'grey' : 'red'"
             icon="favorite"
           />
-          <div class="absolute-bottom">39</div>
+          <div class="absolute-bottom">{{ likes }}</div>
         </div>
 
         <!-- Saved Posts -->
@@ -32,30 +33,42 @@
             :text-color="1 === 1 ? 'secondary' : 'blue'"
             icon="bookmark"
           />
-          <div class="absolute-bottom text-secondary">4</div>
+          <div class="absolute-bottom text-secondary">{{ saves }}</div>
         </div>
       </div>
 
       <!-- Markdown Post Content Section -->
       <div class="col bg-white rounded-borders">
         <!-- Cover Image -->
-        <q-img style="height: 338px;" :src="imgURL" alt="My image" />
+        <q-img
+          style="height: 338px;"
+          v-if="postImage"
+          :src="postImage"
+          alt="My image"
+        />
 
         <!-- Post body -->
         <div class="q-py-lg q-px-xl">
           <div class="row items-center">
             <!-- Avatar -->
             <div>
-              <q-avatar size="54px">
-                <img src="https://cdn.quasar.dev/img/avatar.png" />
-              </q-avatar>
+              <router-link :to="'/users/' + this.userId">
+                <q-avatar size="54px">
+                  <img :src="userAvatar" />
+                </q-avatar>
+              </router-link>
             </div>
 
             <!-- User -->
             <div class="q-ml-sm">
-              <div class="text-subtitle1 text-bold">Lê Minh Hào</div>
+              <div class="text-subtitle1 text-bold">
+                <router-link :to="'/users/' + this.userId">
+                  {{ username }}
+                </router-link>
+              </div>
+
               <div class="text-caption text-weight-thin">
-                Đăng vào 10/9/2021
+                Đăng vào {{ createdAt }}
               </div>
             </div>
           </div>
@@ -64,25 +77,22 @@
           <div class="q-my-lg">
             <!-- Title -->
             <div class="text-h3 text-bold">
-              Passing Data with React Router using Link
+              {{ title }}
             </div>
 
             <!-- Tags -->
             <div class="q-mt-sm q-gutter-x-sm text-caption">
-              <span>#react</span>
+              <!-- <span>#react</span>
               <span>#javascript</span>
-              <span>#html</span>
+              <span>#html</span> -->
+
+              <span v-for="tag in this.tags" :key="tag">{{ tag }}</span>
             </div>
           </div>
 
           <!-- Text Markdown Body -->
-          <div>
-            If you've used React Router on many projects, definitely you've
-            asked How i can pass some data or state to other components through
-            a link tag?. So 1st of all we'll discuss how we can pass data
-            between components in React.
-            
-            <vue-markdown :source="text" />
+          <div class="markdown-body">
+            <vue-markdown :source="body" />
           </div>
         </div>
 
@@ -99,7 +109,12 @@
             <!-- Avatar -->
             <div>
               <q-avatar size="lg">
-                <img src="https://cdn.quasar.dev/img/avatar.png" />
+                <img
+                  :src="
+                    getUser.user.user_avatar ||
+                      'https://cdn.quasar.dev/img/avatar.png'
+                  "
+                />
               </q-avatar>
             </div>
 
@@ -155,10 +170,12 @@
           style="top: 86px; margin-left: 0px; width: 320px;"
         >
           <q-avatar>
-            <img src="https://cdn.quasar.dev/img/avatar.png" />
+            <img :src="userAvatar" />
           </q-avatar>
 
-          <span class="q-ml-sm text-body1 text-weight-bold">Lê Minh Hào</span>
+          <span class="q-ml-sm text-body1 text-weight-bold">{{
+            username
+          }}</span>
 
           <div class="q-mt-sm text-body2 text-weight-medium">
             Tham gia vào
@@ -171,7 +188,7 @@
               text-color="dark"
               icon="fas fa-birthday-cake"
             />
-            3/9/2021
+            {{ userBirthday }}
           </div>
         </div>
       </div>
@@ -180,25 +197,73 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
+import { LocalStorage } from 'quasar';
+
 import VueMarkdown from 'vue-markdown';
 
 export default {
-  // mounted() {
-  //   this.$store
-  //     .dispatch({
-  //       type: 'posts/requestAllPosts'
-  //     })
-  //     .then(() => {
-  //       const posts = this.$store.getters['posts/getPosts'];
-  //       console.log('this is your POSTS: ', posts.posts);
+  mounted() {
+    const hashURL = window.location.hash.split('/posts/');
 
-  //       this.text = posts.posts.data[1].body
-  //       console.log('text: ', this.text)
-  //     });
-  // },
+    this.getPost({
+      postId: hashURL[1]
+    })
+      .then(() => {
+        const token = LocalStorage.getItem('accessToken');
+
+        const { post } = this.getOnePost;
+
+        this.postId = post.id;
+        this.title = post.title;
+        this.body = post.body;
+        this.createdAt = post.created_at;
+        this.postImage = post.post_image;
+        this.tags = post.tags;
+        this.userId = post.userId;
+        this.username = post.user_profile.username;
+        this.userBirthday = post.user_profile.created_at;
+        this.userAvatar = post.user_profile.user_avatar;
+        this.likes = post.count_likes;
+        this.saves = 0;
+
+        if (this.getUser.authenticated) {
+          this.getAuthUserLikePost({
+            post: this.getOnePost.post,
+            userId: this.getUser.user.id,
+            postId: this.postId,
+            token
+          })
+            .then(() => {
+              this.authUserLiked = this.getOnePost.post.authUserLiked;
+            })
+            .catch(e => {
+              console.log('error from likedPost: ', e);
+            });
+        }
+      })
+      .catch(e => {
+        console.log('error post: ', e);
+      });
+  },
+
   data() {
     return {
-      text: '',
+      postId: '',
+      title: '',
+      body: '',
+      createdAt: '',
+      postImage: '',
+      tags: [],
+      userId: '',
+      username: '',
+      userBirthday: '',
+      userAvatar: '',
+      likes: 0,
+      authUserLiked: false,
+      saves: 0,
+      authUserSaved: false,
+
       imgURL:
         'https://res.cloudinary.com/practicaldev/image/fetch/s--1iRZ0zp5--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/qguojwfs9v19sxwlvq50.png',
       imgURL2:
@@ -207,8 +272,50 @@ export default {
         'https://res.cloudinary.com/practicaldev/image/fetch/s--xklWbgTW--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/lfralq4h4hu41p6uys3i.jpeg'
     };
   },
+
+  computed: {
+    ...mapGetters('posts', ['getOnePost']),
+    ...mapGetters('user', ['getUser'])
+  },
+
   components: {
     VueMarkdown
+  },
+
+  methods: {
+    ...mapActions('posts', ['getPost', 'likePost', 'getAuthUserLikePost']),
+
+    // Like Post
+    onLike() {
+      const token = LocalStorage.getItem('accessToken');
+
+      if (this.getUser.authenticated) {
+        this.likePost({
+          token,
+          postId: this.postId,
+          userId: this.getUser.user.id,
+          likes: this.likes,
+          post: this.getOnePost.post
+        })
+          .then(() => {
+            // this.likes += 1;
+            // this.authUserLiked = true;
+
+            this.likes = this.getOnePost.post.count_likes;
+            this.authUserLiked = this.getOnePost.post.authUserLiked;
+          })
+          .catch(e => {
+            console.log('Error: ', e);
+
+            this.$q.notify({
+              type: 'negative',
+              message: 'ERROR MATE!!!'
+            });
+          });
+      } else {
+        this.$router.push('/login');
+      }
+    }
   }
 };
 </script>

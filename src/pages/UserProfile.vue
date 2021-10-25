@@ -106,16 +106,16 @@
 
       <!-- Posts -->
       <div class="col">
+        <!-- <Post />
         <Post />
-        <Post />
-        <Post />
+        <Post /> -->
       </div>
     </div>
   </q-page>
 </template>
 
 <script>
-import Post from '../components/home_page/Post.vue';
+// import Post from '../components/home_page/Post.vue';
 
 export default {
   data() {
@@ -124,7 +124,7 @@ export default {
     };
   },
   components: {
-    Post
+    // Post
   }
 };
 </script>
