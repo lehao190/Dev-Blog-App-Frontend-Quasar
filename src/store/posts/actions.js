@@ -1,4 +1,5 @@
 import { api } from 'boot/axios';
+import { app, socket } from 'boot/socket';
 import { handle } from '../../utils/handle_promise';
 import {
   POSTS_RESET,
@@ -261,4 +262,93 @@ export async function getAuthUserLikePost({ commit }, payload) {
       }
     });
   }
+}
+
+// get all comments for post
+export async function getAllComments({ commit }, payload) {
+  const { postId, post } = payload;
+
+  commit({
+    type: POSTS_REQUEST
+  });
+
+  const [commentData, commentError] = await handle(
+    api.get(`/comments?postId=${postId}&$sort[created_at]=-1`)
+  );
+
+  if (commentError) {
+    commit({
+      type: POSTS_FAILURE,
+      error: commentError.response
+    });
+
+    throw commentError.response;
+  }
+
+  const { data } = commentData;
+
+  const comments = data.data;
+
+  commit({
+    type: POSTS_SUCCESS,
+    post: {
+      ...post,
+      comments
+    }
+  });
+}
+
+// Create User Comment
+export async function createComment({ commit }, payload) {
+  const { username, userAvatar, userId, postId, commentText, post, token } = payload;
+
+  commit({
+    type: POSTS_REQUEST
+  });
+
+  const [commentData, commentError] = await handle(
+    api.post(
+      '/comments',
+      {
+        userId,
+        postId,
+        comment_text: commentText
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+  );
+
+  if (commentError) {
+    commit({
+      type: POSTS_FAILURE,
+      error: commentError.response
+    });
+
+    throw commentError.response;
+  }
+
+  const { data } = commentData;
+
+  // console.log('comment: ', data)
+  // console.log('post comments: ', post.comments)
+
+  commit({
+    type: POSTS_SUCCESS,
+    post: {
+      ...post,
+      comments: [
+        {
+          username,
+          user_avatar: userAvatar,
+          created_at: data.created_at,
+          comment_text: data.comment_text
+        },
+        ...post.comments
+      ]
+    }
+  });
 }

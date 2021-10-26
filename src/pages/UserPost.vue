@@ -120,9 +120,16 @@
 
             <!-- Authenticated User's Input -->
             <div class="q-ml-sm col">
-              <q-input outlined autogrow color="secondary" />
+              <q-input
+                v-model="commentText"
+                outlined
+                autogrow
+                color="secondary"
+              />
+
               <div class="q-mt-sm">
                 <q-btn
+                  @click="onComment"
                   class="text-bold"
                   color="secondary"
                   label="Đăng"
@@ -134,11 +141,15 @@
           </div>
 
           <!-- Users Comments -->
-          <div class="row items-start">
+          <div
+            class="row items-start q-py-sm"
+            v-for="comment in this.comments"
+            :key="comment.id"
+          >
             <!-- Avatar -->
             <div>
               <q-avatar size="lg">
-                <img src="https://cdn.quasar.dev/img/avatar.png" />
+                <img :src="comment.user_avatar" />
               </q-avatar>
             </div>
 
@@ -146,15 +157,16 @@
             <div class="q-ml-sm col">
               <q-card class="my-card bg-white no-shadow" bordered>
                 <q-card-section>
-                  <div class="text-subtitle1 text-bold">Lê Minh Hào</div>
-                  <div class="text-subtitle2">Đăng vào 19/11/2021</div>
+                  <div class="text-subtitle1 text-bold">
+                    {{ comment.username }}
+                  </div>
+                  <div class="text-subtitle2">
+                    Đăng vào {{ comment.created_at }}
+                  </div>
                 </q-card-section>
 
                 <q-card-section>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Minima corrupti sequi inventore veritatis maxime minus labore
-                  ducimus, ipsum rem. Sunt, voluptatem. Aliquam deleniti quasi
-                  in praesentium. Modi molestias assumenda alias.
+                  {{ comment.comment_text }}
                 </q-card-section>
               </q-card>
             </div>
@@ -206,6 +218,7 @@ export default {
   mounted() {
     const hashURL = window.location.hash.split('/posts/');
 
+    // Get post info
     this.getPost({
       postId: hashURL[1]
     })
@@ -227,6 +240,19 @@ export default {
         this.likes = post.count_likes;
         this.saves = 0;
 
+        // Get ALL Comments
+        this.getAllComments({
+          postId: this.postId,
+          post: this.getOnePost.post
+        })
+          .then(() => {
+            this.comments = this.getOnePost.post.comments;
+          })
+          .catch(e => {
+            console.log('error comments: ', e);
+          });
+
+        // Check liked post for auth user
         if (this.getUser.authenticated) {
           this.getAuthUserLikePost({
             post: this.getOnePost.post,
@@ -263,6 +289,8 @@ export default {
       authUserLiked: false,
       saves: 0,
       authUserSaved: false,
+      commentText: '',
+      comments: [],
 
       imgURL:
         'https://res.cloudinary.com/practicaldev/image/fetch/s--1iRZ0zp5--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/qguojwfs9v19sxwlvq50.png',
@@ -283,7 +311,13 @@ export default {
   },
 
   methods: {
-    ...mapActions('posts', ['getPost', 'likePost', 'getAuthUserLikePost']),
+    ...mapActions('posts', [
+      'getPost',
+      'likePost',
+      'getAuthUserLikePost',
+      'createComment',
+      'getAllComments'
+    ]),
 
     // Like Post
     onLike() {
@@ -298,11 +332,38 @@ export default {
           post: this.getOnePost.post
         })
           .then(() => {
-            // this.likes += 1;
-            // this.authUserLiked = true;
-
             this.likes = this.getOnePost.post.count_likes;
             this.authUserLiked = this.getOnePost.post.authUserLiked;
+          })
+          .catch(e => {
+            console.log('Error: ', e);
+
+            this.$q.notify({
+              type: 'negative',
+              message: 'ERROR MATE!!!'
+            });
+          });
+      } else {
+        this.$router.push('/login');
+      }
+    },
+
+    // Create Comment
+    onComment() {
+      const token = LocalStorage.getItem('accessToken');
+
+      if (this.getUser.authenticated) {
+        this.createComment({
+          post: this.getOnePost.post,
+          username: this.getUser.user.username,
+          userAvatar: this.getUser.user.user_avatar,
+          postId: this.postId,
+          userId: this.getUser.user.id,
+          commentText: this.commentText,
+          token
+        })
+          .then(() => {
+            this.comments = this.getOnePost.post.comments
           })
           .catch(e => {
             console.log('Error: ', e);
