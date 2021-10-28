@@ -291,13 +291,6 @@ export default {
       authUserSaved: false,
       commentText: '',
       comments: [],
-
-      imgURL:
-        'https://res.cloudinary.com/practicaldev/image/fetch/s--1iRZ0zp5--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/qguojwfs9v19sxwlvq50.png',
-      imgURL2:
-        'https://i.pinimg.com/originals/7f/d0/22/7fd022bd8d6c1a98cc539095b750ace7.jpg',
-      imgURL3:
-        'https://res.cloudinary.com/practicaldev/image/fetch/s--xklWbgTW--/c_imagga_scale,f_auto,fl_progressive,h_420,q_auto,w_1000/https://dev-to-uploads.s3.amazonaws.com/uploads/articles/lfralq4h4hu41p6uys3i.jpeg'
     };
   },
 
@@ -326,6 +319,7 @@ export default {
       if (this.getUser.authenticated) {
         this.likePost({
           token,
+          authUserLiked: this.authUserLiked,
           postId: this.postId,
           userId: this.getUser.user.id,
           likes: this.likes,
@@ -355,6 +349,7 @@ export default {
       if (this.getUser.authenticated) {
         this.createComment({
           post: this.getOnePost.post,
+          comments: this.comments,
           username: this.getUser.user.username,
           userAvatar: this.getUser.user.user_avatar,
           postId: this.postId,
@@ -363,6 +358,7 @@ export default {
           token
         })
           .then(() => {
+            this.commentText = ''
             this.comments = this.getOnePost.post.comments
           })
           .catch(e => {

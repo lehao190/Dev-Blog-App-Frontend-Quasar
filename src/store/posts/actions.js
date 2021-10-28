@@ -1,5 +1,4 @@
 import { api } from 'boot/axios';
-import { app, socket } from 'boot/socket';
 import { handle } from '../../utils/handle_promise';
 import {
   POSTS_RESET,
@@ -124,14 +123,14 @@ export async function createPost({ commit }, payload) {
 }
 
 // Like Post
-export async function likePost({ commit }, payload) {
-  const { postId, userId, token, likes, post } = payload;
+export async function likePost({ commit, getters }, payload) {
+  const { authUserLiked, postId, userId, token, likes, post } = payload;
 
   commit({
     type: POSTS_REQUEST
   });
 
-  if (post.authUserLiked) {
+  if (authUserLiked) {
     const [removeLikeData, removeLikeError] = await handle(
       api.delete(`/likes?userId=${userId}&postId=${postId}`, {
         headers: {
@@ -300,7 +299,7 @@ export async function getAllComments({ commit }, payload) {
 
 // Create User Comment
 export async function createComment({ commit }, payload) {
-  const { username, userAvatar, userId, postId, commentText, post, token } = payload;
+  const { comments, username, userAvatar, userId, postId, commentText, post, token } = payload;
 
   commit({
     type: POSTS_REQUEST
@@ -333,9 +332,6 @@ export async function createComment({ commit }, payload) {
 
   const { data } = commentData;
 
-  // console.log('comment: ', data)
-  // console.log('post comments: ', post.comments)
-
   commit({
     type: POSTS_SUCCESS,
     post: {
@@ -347,7 +343,7 @@ export async function createComment({ commit }, payload) {
           created_at: data.created_at,
           comment_text: data.comment_text
         },
-        ...post.comments
+        ...comments
       ]
     }
   });

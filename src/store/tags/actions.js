@@ -194,3 +194,91 @@ export async function deleteTags({ commit }, payload) {
     method: 'delete'
   });
 }
+
+// Follow Tags
+export async function followTag({ commit }, payload) {
+  const { tagId, userId, token } = payload;
+
+  commit({
+    type: TAGS_REQUEST
+  });
+
+  const [tagData, tagError] = await handle(
+    api.post(
+      '/tags-users',
+      {
+        userId,
+        tagsId: tagId
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+  );
+
+  if (tagError) {
+    commit({
+      type: TAGS_FAILURE,
+      error: tagError.response
+    });
+
+    throw tagError.response;
+  }
+
+  const { data } = tagData;
+
+  commit({
+    type: TAGS_SUCCESS,
+    tag: data
+  });
+}
+
+// authenticated user followed tags
+export async function getAuthUserFollowedTags(
+  { commit },
+  payload
+) {
+  const { userId, token, tags } = payload;
+
+  commit({
+    type: TAGS_REQUEST
+  });
+
+  const [followedTagsData, followTagsError] = await handle(
+    api.get(`/tags-users?userId=${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+  );
+
+  if (followTagsError) {
+    commit({
+      type: TAGS_FAILURE,
+      error: followTagsError.response
+    });
+
+    throw followTagsError.response;
+  }
+
+  const {
+    data: { data }
+  } = followedTagsData;
+
+  for (let i = 0; i < data.length; i++) {
+    for (let j = 0; j < tags.length; j++) {
+      if (tags[j].id === data[i].tagsId) {
+        tags[j].followed = true
+      }
+    }
+  }
+
+  commit({
+    type: TAGS_SUCCESS,
+    tags: {
+      data: [...tags]
+    }
+  });
+}

@@ -20,7 +20,7 @@ export function TAGS_SUCCESS(state, payload) {
   if (payload.tags) {
     if (payload.method === 'delete') {
       if (!payload.tags.length) {
-        payload.tags = [payload.tags]
+        payload.tags = [payload.tags];
       }
 
       payload.tags.filter(function(removedTag) {
@@ -28,8 +28,8 @@ export function TAGS_SUCCESS(state, payload) {
           return tag.id !== removedTag.id;
         });
       });
-      
-      return state.tags
+
+      return state.tags;
     }
 
     state.tags = payload.tags.data;
