@@ -1,7 +1,6 @@
 import { api } from 'boot/axios';
 import { handle } from '../../utils/handle_promise';
 import {
-  POSTS_RESET,
   POSTS_FAILURE,
   POSTS_REQUEST,
   POSTS_SUCCESS

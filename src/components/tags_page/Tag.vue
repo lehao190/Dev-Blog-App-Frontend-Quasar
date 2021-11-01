@@ -66,10 +66,18 @@ export default {
 
       if (this.getUser.authenticated) {
         this.followTag({
+          isFollowed: this.isFollowed,
           tagId: this.tag.id,
           userId: this.getUser.user.id,
           token
         })
+          .then(() => {
+            if (this.isFollowed) {
+              this.isFollowed = false
+            } else {
+              this.isFollowed = true
+            }
+          })
           .catch((e) => {
             console.log('error follow tag: ', e)
           })

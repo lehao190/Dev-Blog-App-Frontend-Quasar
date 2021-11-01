@@ -3,7 +3,6 @@ import { handle } from '../../utils/handle_promise';
 import {
   TAGS_FAILURE,
   TAGS_REQUEST,
-  TAGS_RESET,
   TAGS_SUCCESS
 } from '../mutation-types/tagsConstants';
 
@@ -197,49 +196,74 @@ export async function deleteTags({ commit }, payload) {
 
 // Follow Tags
 export async function followTag({ commit }, payload) {
-  const { tagId, userId, token } = payload;
+  const { isFollowed, tagId, userId, token } = payload;
 
   commit({
     type: TAGS_REQUEST
   });
 
-  const [tagData, tagError] = await handle(
-    api.post(
-      '/tags-users',
-      {
-        userId,
-        tagsId: tagId
-      },
-      {
+  if (!isFollowed) {
+    const [tagData, tagError] = await handle(
+      api.post(
+        '/tags-users',
+        {
+          userId,
+          tagsId: tagId
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      )
+    );
+
+    if (tagError) {
+      commit({
+        type: TAGS_FAILURE,
+        error: tagError.response
+      });
+
+      throw tagError.response;
+    }
+
+    const { data } = tagData;
+
+    commit({
+      type: TAGS_SUCCESS,
+      tag: data
+    });
+  } else {
+    const [tagData, tagError] = await handle(
+      api.delete(`/tags-users?userId=${userId}&tagsId=${tagId}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
-      }
-    )
-  );
+      })
+    );
 
-  if (tagError) {
+    if (tagError) {
+      commit({
+        type: TAGS_FAILURE,
+        error: tagError.response
+      });
+
+      throw tagError.response;
+    }
+
+    const { data } = tagData;
+
+    console.log('delete users-tags data: ', data)
+
     commit({
-      type: TAGS_FAILURE,
-      error: tagError.response
+      type: TAGS_SUCCESS,
+      tag: data
     });
-
-    throw tagError.response;
   }
-
-  const { data } = tagData;
-
-  commit({
-    type: TAGS_SUCCESS,
-    tag: data
-  });
 }
 
 // authenticated user followed tags
-export async function getAuthUserFollowedTags(
-  { commit },
-  payload
-) {
+export async function getAuthUserFollowedTags({ commit }, payload) {
   const { userId, token, tags } = payload;
 
   commit({
@@ -270,7 +294,7 @@ export async function getAuthUserFollowedTags(
   for (let i = 0; i < data.length; i++) {
     for (let j = 0; j < tags.length; j++) {
       if (tags[j].id === data[i].tagsId) {
-        tags[j].followed = true
+        tags[j].followed = true;
       }
     }
   }
