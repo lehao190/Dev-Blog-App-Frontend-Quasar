@@ -15,14 +15,31 @@
 
       <!-- Users's Posts -->
       <div class="col q-gutter-sm">
-        <div class="text-weight-bold text-h6">Posts</div>
+        <!-- <div class="text-weight-bold text-h6">Posts</div> -->
+
+        <div v-if="getUser.authenticated">
+          <q-btn-toggle
+            v-model="isFollowedTags"
+            @click="changePostData"
+            color="grey-2"
+            unelevated
+            text-color="black"
+            toggle-color="secondary"
+            :options="[
+              { label: 'Mới nhất', value: 'latest' },
+              { label: 'Theo thẻ', value: 'follwedTags' }
+            ]"
+          />
+        </div>
 
         <!-- Post Section -->
         <section>
-          <Post v-for="post in posts" :key="post.id" :post="post" />
-
-          <!-- <Post/>
-          <Post/> -->
+          <Post
+            v-for="post in posts"
+            :key="post.id"
+            :post="post"
+            :isFollowedTags="isFollowedTags"
+          />
         </section>
       </div>
 
@@ -51,6 +68,7 @@ import PinnedPost from '../components/home_page/PinnedPost';
 import Post from '../components/home_page/Post';
 
 import { mapActions, mapGetters } from 'vuex';
+import { LocalStorage } from 'quasar';
 
 export default {
   name: 'PageIndex',
@@ -65,19 +83,75 @@ export default {
 
   data() {
     return {
-      posts: []
+      posts: [],
+      isFollowedTags: 'latest'
     };
   },
   computed: {
-    ...mapGetters('posts', ['getPosts'])
+    ...mapGetters('posts', ['getPosts']),
+    ...mapGetters('user', ['getUser'])
   },
 
   mounted() {
-    this.requestAllPosts().then(() => (this.posts = this.getPosts.posts));
+    if (this.getUser.authenticated) {
+      const token = LocalStorage.getItem('accessToken');
+
+      // Get all user follwed tags posts
+      this.requestAllFollowedTagsPosts({
+        token,
+        userId: this.getUser.user.id
+      })
+        .then(() => {
+          this.isFollowedTags = 'follwedTags';
+          this.posts = this.getPosts.posts;
+        })
+        .catch(e => {
+          console.log('error posts: ', e);
+        });
+    } else {
+      // Get all latest posts
+      this.requestAllPosts()
+        .then(() => {
+          this.isFollowedTags = 'latest';
+          this.posts = this.getPosts.posts;
+        })
+        .catch(e => {
+          console.log('error posts: ', e);
+        });
+    }
   },
 
   methods: {
-    ...mapActions('posts', ['requestAllPosts'])
+    ...mapActions('posts', ['requestAllPosts', 'requestAllFollowedTagsPosts']),
+
+    changePostData() {
+      if (this.getUser.authenticated && this.isFollowedTags === "follwedTags") {
+        const token = LocalStorage.getItem('accessToken');
+
+        // Get all user follwed tags posts
+        this.requestAllFollowedTagsPosts({
+          token,
+          userId: this.getUser.user.id
+        })
+          .then(() => {
+            this.isFollowedTags = 'follwedTags';
+            this.posts = this.getPosts.posts;
+          })
+          .catch(e => {
+            console.log('error posts: ', e);
+          });
+      } else {
+        // Get all latest posts
+        this.requestAllPosts()
+          .then(() => {
+            this.isFollowedTags = 'latest';
+            this.posts = this.getPosts.posts;
+          })
+          .catch(e => {
+            console.log('error posts: ', e);
+          });
+      }
+    }
   }
 };
 </script>

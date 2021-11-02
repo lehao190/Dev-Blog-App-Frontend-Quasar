@@ -31,6 +31,37 @@ export async function requestAllPosts({ commit }) {
   });
 }
 
+// Request All Followed Tags Posts
+export async function requestAllFollowedTagsPosts({ commit }, payload) {
+  const { userId, token } = payload
+
+  commit({
+    type: POSTS_REQUEST
+  });
+
+  const [postsData, postsError] = await handle(
+    api.get(`/tags-users?userId=${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+  );
+
+  if (postsError) {
+    commit({
+      type: POSTS_FAILURE,
+      error: postsError.response
+    });
+  }
+
+  const { data } = postsData;
+
+  commit({
+    type: POSTS_SUCCESS,
+    posts: data.data
+  });
+}
+
 // Get post
 export async function getPost({ commit }, payload) {
   const { postId } = payload;
