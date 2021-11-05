@@ -82,12 +82,11 @@
             v-if="this.authenticated"
             class="text-weight-bold"
             color="secondary"
-            type="a"
-            href="http://localhost:8080/#/create_post"
-            label="Tạo Bài Viết"
             text-color="primary"
             no-caps
-          />
+          > 
+            <router-link class="full-width text-white" to="/create_post">Tạo bài viết</router-link>
+          </q-btn>
 
           <!-- User's Settings -->
           <q-btn-dropdown
@@ -180,6 +179,7 @@ export default {
   },
   methods: {
     ...mapActions('user', ['logout']),
+    
     onLogout () {
       this.logout()
     }

@@ -10,7 +10,11 @@
       <div class="col-md-3 col-sm-12 bg-accent">
         <q-btn
           @click="tableOption = 'post'"
-          class="full-width bg-accent text-weight-thin"
+          :class="[
+            tableOption === 'post'
+              ? 'full-width bg-grey-4 text-weight-thin'
+              : 'full-width bg-accent text-weight-thin'
+          ]"
           unelevated
           align="left"
           label="Bài viết"
@@ -19,7 +23,11 @@
 
         <q-btn
           @click="tableOption = 'saved_post'"
-          class="full-width bg-accent text-weight-thin"
+          :class="[
+            tableOption === 'saved_post'
+              ? 'full-width bg-grey-4 text-weight-thin'
+              : 'full-width bg-accent text-weight-thin'
+          ]"
           unelevated
           align="left"
           label="Bài viết đã lưu"
@@ -28,7 +36,11 @@
 
         <q-btn
           @click="tableOption = 'tag'"
-          class="full-width bg-accent text-weight-thin"
+          :class="[
+            tableOption === 'tag'
+              ? 'full-width bg-grey-4 text-weight-thin'
+              : 'full-width bg-accent text-weight-thin'
+          ]"
           unelevated
           align="left"
           label="Thẻ"
@@ -37,7 +49,11 @@
 
         <q-btn
           @click="tableOption = 'user'"
-          class="full-width bg-accent text-weight-thin"
+          :class="[
+            tableOption === 'user'
+              ? 'full-width bg-grey-4 text-weight-thin'
+              : 'full-width bg-accent text-weight-thin'
+          ]"
           unelevated
           align="left"
           label="Người dùng"
@@ -75,8 +91,21 @@
               :reset="reset"
               v-if="this.tableOption === 'tag'"
             />
-            <UserTable v-if="this.tableOption === 'user'" />
-            <PostTable v-if="this.tableOption === 'post'" />
+
+            <UserTable
+              @selectedUsers="onSelectedItems"
+              @unsetReset="unset"
+              :reset="reset"
+              v-if="this.tableOption === 'user'"
+            />
+
+            <PostTable
+              @selectedPosts="onSelectedItems"
+              @unsetReset="unset"
+              :reset="reset"
+              v-if="this.tableOption === 'post'"
+            />
+
             <SavedPostTable v-if="this.tableOption === 'saved_post'" />
             <!-- <FollowedTagTable v-if="this.tableOption === 'followed_tag'" /> -->
           </div>
@@ -99,7 +128,7 @@ import { LocalStorage } from 'quasar';
 export default {
   data() {
     return {
-      tableOption: 'tag',
+      tableOption: 'user',
       selectedItems: [],
       reset: false
     };

@@ -271,7 +271,7 @@ export async function getAuthUserFollowedTags({ commit }, payload) {
   });
 
   const [followedTagsData, followTagsError] = await handle(
-    api.get(`/tags-users?userId=${userId}`, {
+    api.get(`/tags-users?userId=${userId}&noTagsJoin=1`, {
       headers: {
         Authorization: `Bearer ${token}`
       }

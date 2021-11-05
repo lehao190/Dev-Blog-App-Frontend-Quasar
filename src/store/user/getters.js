@@ -6,6 +6,13 @@ export function getUser (state) {
   }
 }
 
+// Get all users
+export function getUsers (state) {
+  return {
+    users: state.users
+  }
+}
+
 export function getAuthenticated(state) {
   return state.authenticated
 }

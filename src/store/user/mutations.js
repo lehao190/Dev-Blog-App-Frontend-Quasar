@@ -18,7 +18,13 @@ export function USER_CREDENTIALS_FAILURE (state, payload) {
 
 export function USER_CREDENTIALS_SUCCESS (state, payload) {
   state.loading = false
-  state.user = payload.user
-  state.authenticated = true
   state.error = {}
+  // state.user = payload.user
+  state.authenticated = true
+
+  if (payload.users) {
+    state.users = payload.users;
+  } else {
+    state.user = payload.user;
+  }
 }
