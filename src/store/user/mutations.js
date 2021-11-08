@@ -20,11 +20,19 @@ export function USER_CREDENTIALS_SUCCESS (state, payload) {
   state.loading = false
   state.error = {}
   // state.user = payload.user
-  state.authenticated = true
+  // state.authenticated = true
 
   if (payload.users) {
     state.users = payload.users;
-  } else {
+  } 
+  else if (payload.postUser) {
+    state.postUser = payload.postUser
+  }
+  else if (payload.editUser) {
+    state.editUser = payload.editUser
+  }
+  else {
     state.user = payload.user;
+    state.authenticated = true
   }
 }

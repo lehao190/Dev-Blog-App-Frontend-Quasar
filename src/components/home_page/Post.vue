@@ -92,7 +92,7 @@ export default {
   },
 
   mounted() {
-    if (this.isFollowedTags === 'latest') {
+    if (this.isFollowedTags === 'latest' || !this.isFollowedTags) {
       this.userId = this.post.userId;
       this.postId = this.post.id;
       this.title = this.post.title;

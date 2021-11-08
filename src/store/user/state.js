@@ -8,6 +8,8 @@ export default function () {
       email: '',
       user_avatar: ''
     },
-    authenticated: false
+    authenticated: false,
+    postUser: {},
+    editUser: {}
   }
 }

@@ -41,6 +41,70 @@ export async function requestAllUsers({ commit }, payload) {
   });
 }
 
+// Request user to edit
+export async function requestEditUser({ commit }, payload) {
+  const { token, userId } = payload;
+
+  commit({
+    type: USER_CREDENTIALS_REQUEST
+  });
+
+  const [userData, userError] = await handle(
+    api.get(`/users/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+  );
+
+  if (userError) {
+    commit({
+      type: USER_CREDENTIALS_FAILURE,
+      error: userError.response
+    });
+
+    throw userError.response;
+  }
+
+  const { data } = userData;
+
+  // console.log('user edit data: ', data)
+
+  commit({
+    type: USER_CREDENTIALS_SUCCESS,
+    editUser: data
+  });
+}
+
+// Request User Post
+export async function requestUser({ commit }, payload) {
+  const { userId } = payload;
+
+  commit({
+    type: USER_CREDENTIALS_REQUEST
+  });
+
+  const [userData, userError] = await handle(
+    api.get(`/getUser?id=${userId}`)
+  );
+
+  if (userError) {
+    commit({
+      type: USER_CREDENTIALS_FAILURE,
+      error: userError.response
+    });
+
+    throw userError.response;
+  }
+
+  const { data } = userData;
+
+  commit({
+    type: USER_CREDENTIALS_SUCCESS,
+    postUser: data
+  });
+}
+
 // Get authenticated user on refresh page
 export async function me({ commit }) {
   const hashURL = window.location.hash.split('#/#access_token=');

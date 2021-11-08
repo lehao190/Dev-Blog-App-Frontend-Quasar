@@ -6,6 +6,19 @@ export function getUser (state) {
   }
 }
 
+export function getPostUser (state) {
+  return {
+    postUser: state.postUser
+  }
+}
+
+export function getEditUser (state) {
+  // console.log('hello there: ', state)
+  return {
+    editUser: state.editUser
+  }
+}
+
 // Get all users
 export function getUsers (state) {
   return {

@@ -1,4 +1,5 @@
 import { api } from 'boot/axios';
+import posts from '.';
 import { handle } from '../../utils/handle_promise';
 import {
   POSTS_FAILURE,
@@ -31,6 +32,35 @@ export async function requestAllPosts({ commit }) {
   });
 }
 
+// Request All Posts With UserId
+export async function requestAllUserPosts({ commit }, payload) {
+  const { userId } = payload
+  
+  commit({
+    type: POSTS_REQUEST
+  });
+
+  const [postsData, postsError] = await handle(
+    api.get(`/posts?$sort[created_at]=-1&userId=${userId}`)
+  );
+
+  if (postsError) {
+    commit({
+      type: POSTS_FAILURE,
+      error: postsError.response
+    });
+
+    throw postsError.response
+  }
+
+  const { data } = postsData;
+
+  commit({
+    type: POSTS_SUCCESS,
+    posts: data.data
+  });
+}
+
 // Request All Followed Tags Posts
 export async function requestAllFollowedTagsPosts({ commit }, payload) {
   const { userId, token } = payload
@@ -52,6 +82,8 @@ export async function requestAllFollowedTagsPosts({ commit }, payload) {
       type: POSTS_FAILURE,
       error: postsError.response
     });
+
+    throw postsError.response
   }
 
   const { data } = postsData;
