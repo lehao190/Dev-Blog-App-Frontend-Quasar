@@ -274,3 +274,52 @@ export async function logout({ commit }) {
     type: USER_CREDENTIALS_RESET
   });
 }
+
+// Edit user
+export async function editUser({ commit }, payload) {
+  const { userId, username, userAvatar, uploadImage, firebaseImage, token } = payload;
+
+  commit({
+    type: USER_CREDENTIALS_REQUEST
+  });
+
+  const formData = new FormData();
+  formData.append('username', username);
+  formData.append('user_avatar', uploadImage);
+  formData.append('editAvatar', userAvatar);
+  formData.append('firebaseImage', firebaseImage);
+
+  const [userData, userError] = await handle(
+    api.patch(
+      `/users/${userId}`,
+      // {
+      //   // username,
+      //   // user_avatar: userAvatar
+      // },
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    )
+  );
+
+  if (userError) {
+    commit({
+      type: USER_CREDENTIALS_FAILURE,
+      error: userError.response
+    });
+
+    throw userError.response
+  }
+
+  const { data } = userData;
+
+  console.log('Success Edit data: ', data)
+
+  commit({
+    type: USER_CREDENTIALS_SUCCESS,
+    editUser: data
+  });
+}

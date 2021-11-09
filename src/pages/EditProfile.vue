@@ -37,7 +37,12 @@
     </div>
 
     <div class="q-mt-lg">
-      <q-btn color="secondary" class="full-width text-bold" label="Lưu Hồ Sơ" />
+      <q-btn
+        @click="onEditUser"
+        color="secondary"
+        class="full-width text-bold"
+        label="Lưu Hồ Sơ"
+      />
     </div>
   </q-page>
 </template>
@@ -56,10 +61,9 @@ export default {
       userId: hashURL[1]
     })
       .then(() => {
-        // console.log('edit user aha: ', this.getEditUser.editUser)
-
-        this.username = this.getEditUser.editUser.username
-        this.userAvatar = this.getEditUser.editUser.user_avatar
+        this.userId = this.getEditUser.editUser.id;
+        this.username = this.getEditUser.editUser.username;
+        this.userAvatar = this.getEditUser.editUser.user_avatar;
       })
       .catch(e => {
         console.log('error get user edit: ', e);
@@ -68,8 +72,10 @@ export default {
 
   data() {
     return {
+      userId: '',
       username: '',
       userAvatar: '',
+      firebaseImage: false,
       uploadImage: null
     };
   },
@@ -79,7 +85,54 @@ export default {
   },
 
   methods: {
-    ...mapActions('user', ['requestEditUser'])
+    ...mapActions('user', ['requestEditUser', 'editUser']),
+
+    onEditUser() {
+      const token = LocalStorage.getItem('accessToken');
+
+      let hashAvatar
+
+      if (this.userAvatar) {
+        hashAvatar = this.userAvatar.split('dev-blogger-app.appspot.com/o/')
+
+        if (hashAvatar[0] === 'https://firebasestorage.googleapis.com/v0/b/') {
+          hashAvatar = hashAvatar[1].split('?alt')
+          
+          hashAvatar = hashAvatar[0]
+          this.firebaseImage = true
+        } else {
+          hashAvatar = hashAvatar[0]
+          this.firebaseImage = false
+        }
+      }
+
+      // let hashAvatar = this.userAvatar.split('dev-blogger-app.appspot.com/o/')
+
+      // if (hashAvatar) {
+      //   // https://firebasestorage.googleapis.com/v0/b/
+        
+      //   console.log('user avatar: ', hashAvatar[0])
+      // }
+
+      // hashAvatar = hashAvatar[1].split('?alt')
+
+      // console.log('user avatar: ', hashAvatar[0])
+
+      this.editUser({
+        userId: this.userId,
+        username: this.username,
+        userAvatar: hashAvatar,
+        uploadImage: this.uploadImage,
+        firebaseImage: this.firebaseImage,
+        token
+      })
+        .then(() => {
+          this.$router.push(`/users/${this.userId}`);
+        })
+        .catch(e => {
+          console.log('error user edit: ', e);
+        });
+    }
   }
 };
 </script>
