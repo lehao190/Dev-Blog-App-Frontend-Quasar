@@ -37,7 +37,7 @@ export async function requestAllUsers({ commit }, payload) {
 
   commit({
     type: USER_CREDENTIALS_SUCCESS,
-    users: data.data
+    users: data
   });
 }
 
@@ -292,10 +292,6 @@ export async function editUser({ commit }, payload) {
   const [userData, userError] = await handle(
     api.patch(
       `/users/${userId}`,
-      // {
-      //   // username,
-      //   // user_avatar: userAvatar
-      // },
       formData,
       {
         headers: {
@@ -316,10 +312,58 @@ export async function editUser({ commit }, payload) {
 
   const { data } = userData;
 
-  console.log('Success Edit data: ', data)
-
   commit({
     type: USER_CREDENTIALS_SUCCESS,
     editUser: data
+  });
+}
+
+// Delete one or multiple users
+export async function deleteUsers({ commit }, payload) {
+  const { users, token } = payload;
+
+  commit({
+    type: USER_CREDENTIALS_REQUEST
+  });
+
+  let userURL = '/users';
+
+  if (users.length === 1) {
+    userURL = userURL + `/${users[0].id}`;
+  }
+
+  if (users.length > 1) {
+    for (let i = 0; i < users.length; i++) {
+      if (i === 0) {
+        userURL = userURL + `?id[$in]=${users[i].id}`;
+      } else {
+        userURL = userURL + `&id[$in]=${users[i].id}`;
+      }
+    }
+  }
+
+  const [usersData, usersError] = await handle(
+    api.delete(`${userURL}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+  );
+
+  if (usersError) {
+    commit({
+      type: USER_CREDENTIALS_FAILURE,
+      error: usersError.response
+    });
+
+    throw usersError.response;
+  }
+
+  const { data } = usersData;
+
+  commit({
+    type: USER_CREDENTIALS_SUCCESS,
+    users: data,
+    method: 'delete'
   });
 }

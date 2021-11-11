@@ -1,7 +1,7 @@
 <template>
   <q-table
     :grid="isGrid"
-    :data="data"
+    :data="getPosts.posts"
     selection="multiple"
     :selected.sync="selected"
     :columns="columns"
@@ -24,7 +24,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
-import { LocalStorage } from 'quasar';
+// import { LocalStorage } from 'quasar';
 
 export default {
   props: ['reset'],
@@ -77,13 +77,15 @@ export default {
     ...mapGetters('posts', ['getPosts'])
   },
 
-  mounted() {
-    // const token = LocalStorage.getItem('accessToken');
+  async mounted() {
+    // await this.requestAllPosts()
+  
+    // const token = LocalStorage.getItem('accessToken'); 
 
     this.requestAllPosts()
-      .then(() => {
-        this.data = this.getPosts.posts;
-      })
+      // .then(() => {
+      //   this.data = this.getPosts.posts;
+      // })
       .catch(e => {
         console.log('error get users: ', e);
       });

@@ -10,6 +10,7 @@ export default function () {
     },
     authenticated: false,
     postUser: {},
-    editUser: {}
+    editUser: {},
+    users: []
   }
 }

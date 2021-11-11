@@ -44,7 +44,6 @@ export default {
   async mounted() {
     await this.getAllTags();
     // this.data = this.getTags.tags;
-
     // window.addEventListener('change', this.onSelected);
   },
 

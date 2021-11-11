@@ -1,7 +1,7 @@
 <template>
   <q-table
     :grid="isGrid"
-    :data="data"
+    :data="getUsers.users"
     selection="multiple"
     :selected.sync="selected"
     :columns="columns"
@@ -71,18 +71,26 @@ export default {
     ...mapGetters('user', ['getUsers'])
   },
 
-  mounted() {
+  async mounted () {
     const token = LocalStorage.getItem('accessToken');
 
-    this.requestAllUsers({
+    await this.requestAllUsers({
       token
     })
-      .then(() => {
-        this.data = this.getUsers.users;
-      })
-      .catch(e => {
-        console.log('error get users: ', e);
-      });
+
+    // console.log(this.getUsers.users)
+    // this.data = this.getUsers.users
+    
+    // this.requestAllUsers({
+    //   token
+    // })
+    //   .then(() => {
+    //     console.log('users from requestAllUsers: ', this.getUsers.users)
+    //     this.data = this.getUsers.users;
+    //   })
+    //   .catch(e => {
+    //     console.log('error get users: ', e);
+    //   });
   },
 
   watch: {

@@ -13,7 +13,6 @@ export function getPostUser (state) {
 }
 
 export function getEditUser (state) {
-  // console.log('hello there: ', state)
   return {
     editUser: state.editUser
   }

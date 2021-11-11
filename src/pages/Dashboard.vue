@@ -134,9 +134,10 @@ export default {
     };
   },
 
-  computed: {
-    ...mapGetters('tags', ['getTags'])
-  },
+  // computed: {
+  //   ...mapGetters('tags', ['getTags']),
+  //   ...mapGetters('user', ['getUsers'])
+  // },
 
   components: {
     TagTable,
@@ -147,6 +148,8 @@ export default {
   },
   methods: {
     ...mapActions('tags', ['deleteTags']),
+    ...mapActions('user', ['deleteUsers']),
+    ...mapActions('posts', ['deletePosts']),
 
     onSelectedItems(value) {
       this.selectedItems = value;
@@ -170,7 +173,12 @@ export default {
       const token = LocalStorage.getItem('accessToken');
 
       if (this.tableOption === 'user') {
-        return console.log('Delete user');
+        this.deleteUsers({
+          token,
+          users: this.selectedItems
+        });
+
+        return (this.reset = true);
       }
 
       if (this.tableOption === 'tag') {
@@ -183,7 +191,12 @@ export default {
       }
 
       if (this.tableOption === 'post') {
-        return console.log('Delete post');
+        this.deletePosts({
+          token,
+          posts: this.selectedItems
+        })
+
+        return (this.reset = true);
       }
 
       if (this.tableOption === 'saved_post') {

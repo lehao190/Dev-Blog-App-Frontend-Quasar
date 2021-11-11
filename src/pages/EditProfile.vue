@@ -106,18 +106,6 @@ export default {
         }
       }
 
-      // let hashAvatar = this.userAvatar.split('dev-blogger-app.appspot.com/o/')
-
-      // if (hashAvatar) {
-      //   // https://firebasestorage.googleapis.com/v0/b/
-        
-      //   console.log('user avatar: ', hashAvatar[0])
-      // }
-
-      // hashAvatar = hashAvatar[1].split('?alt')
-
-      // console.log('user avatar: ', hashAvatar[0])
-
       this.editUser({
         userId: this.userId,
         username: this.username,

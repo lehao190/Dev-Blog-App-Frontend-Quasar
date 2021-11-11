@@ -1,5 +1,5 @@
 import { api } from 'boot/axios';
-import posts from '.';
+// import posts from '.';
 import { handle } from '../../utils/handle_promise';
 import {
   POSTS_FAILURE,
@@ -28,7 +28,57 @@ export async function requestAllPosts({ commit }) {
 
   commit({
     type: POSTS_SUCCESS,
-    posts: data.data
+    posts: data
+  });
+}
+
+// Delete one or multiple posts
+export async function deletePosts({ commit }, payload) {
+  const { posts, token } = payload;
+
+  commit({
+    type: POSTS_REQUEST
+  });
+
+  let postURL = '/posts';
+
+  if (posts.length === 1) {
+    postURL = postURL + `/${posts[0].id}`;
+  }
+
+  if (posts.length > 1) {
+    for (let i = 0; i < posts.length; i++) {
+      if (i === 0) {
+        postURL = postURL + `?id[$in]=${posts[i].id}`;
+      } else {
+        postURL = postURL + `&id[$in]=${posts[i].id}`;
+      }
+    }
+  }
+
+  const [postsData, postsError] = await handle(
+    api.delete(`${postURL}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+  );
+
+  if (postsError) {
+    commit({
+      type: POSTS_FAILURE,
+      error: postsError.response
+    });
+
+    throw postsError.response;
+  }
+
+  const { data } = postsData;
+
+  commit({
+    type: POSTS_SUCCESS,
+    posts: data,
+    method: 'delete'
   });
 }
 

@@ -19,7 +19,21 @@ export function POSTS_SUCCESS(state, payload) {
   state.error = {};
 
   if (payload.posts) {
-    state.posts = payload.posts;
+    if (payload.method === 'delete') {
+      if (!payload.posts.length) {
+        payload.posts = [payload.posts];
+      }
+
+      payload.posts.filter(function(removedPost) {
+        state.posts = state.posts.filter(function(post) {
+          return post.id !== removedPost.id;
+        });
+      });
+
+      return state.posts;
+    }
+
+    state.posts = payload.posts.data;
   } else {
     state.post = payload.post;
   }

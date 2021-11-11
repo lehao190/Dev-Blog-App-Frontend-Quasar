@@ -253,8 +253,6 @@ export async function followTag({ commit }, payload) {
 
     const { data } = tagData;
 
-    console.log('delete users-tags data: ', data)
-
     commit({
       type: TAGS_SUCCESS,
       tag: data
