@@ -48,13 +48,13 @@ export default {
           label: 'ID bài viết',
           field: 'id'
         },
-        {
-          name: 'email',
-          label: 'Email người tạo',
-          field: 'email',
-          align: 'center',
-          field: row => row.user_profile.email
-        },
+        // {
+        //   name: 'email',
+        //   label: 'Email người tạo',
+        //   field: 'email',
+        //   align: 'center',
+        //   field: row => row.user_profile.email
+        // },
         {
           name: 'created_at',
           label: 'Tạo lúc',
@@ -78,17 +78,17 @@ export default {
   },
 
   async mounted() {
-    // await this.requestAllPosts()
+    await this.requestAllPosts()
   
     // const token = LocalStorage.getItem('accessToken'); 
 
-    this.requestAllPosts()
+    // this.requestAllPosts()
       // .then(() => {
       //   this.data = this.getPosts.posts;
       // })
-      .catch(e => {
-        console.log('error get users: ', e);
-      });
+      // .catch(e => {
+      //   console.log('error get users: ', e);
+      // });
   },
 
   watch: {

@@ -107,7 +107,7 @@ export async function requestAllUserPosts({ commit }, payload) {
 
   commit({
     type: POSTS_SUCCESS,
-    posts: data.data
+    posts: data
   });
 }
 
@@ -140,7 +140,7 @@ export async function requestAllFollowedTagsPosts({ commit }, payload) {
 
   commit({
     type: POSTS_SUCCESS,
-    posts: data.data
+    posts: data
   });
 }
 
