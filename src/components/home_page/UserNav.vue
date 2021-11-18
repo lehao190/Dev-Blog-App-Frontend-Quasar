@@ -35,7 +35,7 @@
         <q-item-section class="text-weight-bold">Thẻ</q-item-section>
       </q-item>
 
-      <q-item clickable v-ripple>
+      <!-- <q-item clickable v-ripple>
         <q-item-section avatar>
           <q-avatar
             rounded
@@ -48,7 +48,7 @@
         <q-item-section class="text-weight-bold"
           >Bài viết có đánh dấu</q-item-section
         >
-      </q-item>
+      </q-item> -->
     </q-list>
   </nav>
 </template>

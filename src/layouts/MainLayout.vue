@@ -23,6 +23,8 @@
           </router-link>
           <!-- Searching for posts -->
           <q-input
+            @keyup.enter="searchingPosts"
+            v-model="search"
             class="absolute gt-sm"
             style="width: 400px; display: inline-block; top: -5px;"
             filled
@@ -84,8 +86,10 @@
             color="secondary"
             text-color="primary"
             no-caps
-          > 
-            <router-link class="full-width text-white" to="/create_post">Tạo bài viết</router-link>
+          >
+            <router-link class="full-width text-white" to="/create_post"
+              >Tạo bài viết</router-link
+            >
           </q-btn>
 
           <!-- User's Settings -->
@@ -95,14 +99,23 @@
             size="xl"
             no-icon-animation
             unelevated
-            :dropdown-icon="'img:' + this.getUser.user.user_avatar"
+            :dropdown-icon="
+              'img:' +
+                [
+                  !this.getUser.user.user_avatar
+                    ? 'https://cdn.quasar.dev/img/boy-avatar.png'
+                    : this.getUser.user.user_avatar
+                ]
+            "
             style="border-radius: 50%; width: 40px; height: 40px;  overflow: hidden;"
             padding="0px"
           >
             <q-list style="width: 260px">
               <q-item clickable v-close-popup>
                 <q-item-section>
-                  <q-item-label class="text-weight-bold">{{ getUser.user.username }}</q-item-label>
+                  <q-item-label class="text-weight-bold">{{
+                    getUser.user.username
+                  }}</q-item-label>
                 </q-item-section>
               </q-item>
 
@@ -110,24 +123,26 @@
 
               <q-item clickable v-close-popup>
                 <q-item-section>
-                  <q-item-label><router-link class="full-width" to="/dashboard">Dashboard</router-link></q-item-label>
+                  <q-item-label>
+                    <router-link class="full-width" to="/dashboard">
+                      Dashboard
+                    </router-link>
+                  </q-item-label>
                 </q-item-section>
               </q-item>
 
               <q-item clickable v-close-popup>
                 <q-item-section>
-                  <q-item-label>Danh sách bài viết</q-item-label>
+                  <q-item-label>
+                    <router-link class="full-width" :to="`/users/${getUser.user.id}`">
+                      Chỉnh sửa thông tin
+                    </router-link>
+                  </q-item-label>
                 </q-item-section>
               </q-item>
-              
-              <q-item clickable v-close-popup>
-                <q-item-section>
-                  <q-item-label>Cài đặt</q-item-label>
-                </q-item-section>
-              </q-item>
-              
+
               <q-separator />
-              
+
               <!-- Logout -->
               <q-item clickable v-close-popup>
                 <q-item-section @click="onLogout">
@@ -156,9 +171,9 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import IntroSec from '../components/home_page/IntroSec'
-import UserNav from '../components/home_page/UserNav'
+import { mapGetters, mapActions } from 'vuex';
+import IntroSec from '../components/home_page/IntroSec';
+import UserNav from '../components/home_page/UserNav';
 
 export default {
   name: 'MainLayout',
@@ -166,23 +181,49 @@ export default {
     IntroSec,
     UserNav
   },
-  data () {
+  data() {
     return {
-      left: false
-    }
+      left: false,
+      search: ''
+    };
   },
   computed: {
     ...mapGetters('user', ['getUser', 'getUserError']),
-    authenticated: function () {
-      return this.getUser.authenticated
+    authenticated: function() {
+      return this.getUser.authenticated;
     }
   },
   methods: {
-    ...mapActions('user', ['logout']),
-    
-    onLogout () {
+    ...mapActions('user', ['logout', 'refresh']),
+
+    onLogout() {
+      this.$q.loading.show();
+
       this.logout()
+        .then(() => {
+          this.$q.loading.hide();
+
+          location.reload();
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+
+          this.$q.notify({
+            type: 'negative',
+            message: 'Đã xảy ra lỗi!!!'
+          });
+        });
+    },
+
+    searchingPosts() {
+      const path = `/search/?title=${this.search}`;
+
+      if (this.$route.path !== path) {
+        this.$router.push(path).catch(() => {
+          return;
+        });
+      }
     }
   }
-}
+};
 </script>

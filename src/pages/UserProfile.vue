@@ -4,7 +4,13 @@
     <div class="bg-white q-mt-xl q-pb-lg rounded-borders relative-position">
       <!-- User's image when greater than small device -->
       <q-avatar style="top: 0px" class="gt-sm absolute-center" size="130px">
-        <img :src="postUser.user_avatar" />
+        <img
+          :src="
+            postUser.user_avatar
+              ? postUser.user_avatar
+              : 'https://cdn.quasar.dev/img/boy-avatar.png'
+          "
+        />
       </q-avatar>
 
       <!-- User's image when greater than small device -->
@@ -13,13 +19,28 @@
         class="lt-md absolute-top-left"
         size="90px"
       >
-        <img :src="postUser.user_avatar" />
+        <img
+          :src="
+            postUser.user_avatar
+              ? postUser.user_avatar
+              : 'https://cdn.quasar.dev/img/boy-avatar.png'
+          "
+        />
       </q-avatar>
 
       <!-- Edit User's Profile -->
       <div class="q-pt-lg q-px-lg q-pb-lg text-right">
-        <q-btn v-if="getUser.authenticated && getUser.user.id === postUser.id" class="text-bold" color="secondary" no-caps>
-          <router-link class="full-width text-white" :to="'/users/edit/' + postUser.id">Sửa Hồ Sơ</router-link>
+        <q-btn
+          v-if="getUser.authenticated && getUser.user.id === postUser.id"
+          class="text-bold"
+          color="secondary"
+          no-caps
+        >
+          <router-link
+            class="full-width text-white"
+            :to="'/users/edit/' + postUser.id"
+            >Sửa Hồ Sơ</router-link
+          >
         </q-btn>
       </div>
 
@@ -108,11 +129,7 @@
 
       <!-- Posts -->
       <div class="col">
-        <Post
-          v-for="post in posts"
-          :key="post.id"
-          :post="post"
-        />
+        <Post v-for="post in posts" :key="post.id" :post="post" />
       </div>
     </div>
   </q-page>
@@ -137,6 +154,8 @@ export default {
   },
 
   mounted() {
+    this.$q.loading.show();
+
     const hashURL = window.location.hash.split('/users/');
 
     this.requestAllUserPosts({
@@ -144,19 +163,33 @@ export default {
     })
       .then(() => {
         this.posts = this.getPosts.posts;
+
+        this.$q.loading.hide();
       })
-      .catch(e => {
-        console.log('error get user posts: ', e);
+      .catch(() => {
+        this.$q.loading.hide();
+
+        this.$router.push('/')
+
+        this.$q.notify({
+          type: 'negative',
+          message: 'Đã xảy ra lỗi khi tải nội dung!!!'
+        });
       });
 
     this.requestUser({
       userId: hashURL[1]
     })
       .then(() => {
-        this.postUser = this.getPostUser.postUser
+        this.postUser = this.getPostUser.postUser;
       })
-      .catch(e => {
-        console.log('error get user posts: ', e);
+      .catch(() => {
+        this.$router.push('/')
+
+        this.$q.notify({
+          type: 'negative',
+          message: 'Đã xảy ra lỗi khi lấy thông tin chủ bài viết!!!'
+        });
       });
   },
 

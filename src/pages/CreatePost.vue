@@ -111,15 +111,30 @@ import { LocalStorage } from 'quasar';
 
 export default {
   mounted() {
-    this.getAllTags()
-      .then(() => {
-        for (let i = 0; i < this.getTags.tags.length; i++) {
-          this.options.push(this.getTags.tags[i].tag_name);
-        }
-      })
-      .catch(e => {
-        console.log('Error get all tags: ', e);
-      });
+    if (this.getUser.authenticated === false) {
+      this.$router.push('/login');
+    } else {
+      this.$q.loading.show();
+
+      this.getAllTags()
+        .then(() => {
+          for (let i = 0; i < this.getTags.tags.length; i++) {
+            this.options.push(this.getTags.tags[i].tag_name);
+          }
+
+          this.$q.loading.hide();
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+
+          this.$q.notify({
+            type: 'negative',
+            message: 'Đã xảy ra lỗi!!!'
+          });
+
+          this.$router.push('/');
+        });
+    }
   },
 
   data() {
@@ -146,6 +161,7 @@ export default {
   methods: {
     ...mapActions('posts', ['createPost']),
     ...mapActions('tags', ['getAllTags']),
+    ...mapActions('user', ['refresh']),
 
     optionsAdd(option) {
       this.getTags.tags.forEach(tag => {
@@ -155,7 +171,7 @@ export default {
       });
     },
 
-    optionsRemoved (option) {
+    optionsRemoved(option) {
       this.getTags.tags.forEach(tag => {
         if (option.value === tag.tag_name) {
           this.selectedOptions.splice(option.index, 1);
@@ -164,6 +180,8 @@ export default {
     },
 
     onSubmit() {
+      this.$q.loading.show();
+
       const token = LocalStorage.getItem('accessToken');
 
       this.createPost({
@@ -175,15 +193,58 @@ export default {
         token
       })
         .then(() => {
+          this.$q.loading.hide();
+
           this.$router.push('/');
         })
         .catch(e => {
-          console.log('Error Post: ', e);
+          if (!e.data.fileError && e.data.data.name === 'TokenExpiredError') {
+            this.refresh()
+              .then(() => {
+                this.$q.loading.hide();
 
-          this.$q.notify({
-            type: 'negative',
-            message: 'Lỗi đã xảy ra không thể tạo bài viết!'
-          });
+                this.$q.notify({
+                  type: 'warning',
+                  textColor: 'white',
+                  message: 'Bạn vui lòng thực hiện lại thao tác!!!'
+                });
+              })
+              .catch(() => {
+                this.$q.loading.hide();
+
+                this.$q.notify({
+                  type: 'negative',
+                  message: 'Bạn đã hết thời hạn đăng nhập!!!'
+                });
+
+                this.$router.push('/login');
+              });
+          } else if (e.data.name === 'BadRequest') {
+            this.$q.loading.hide();
+
+            if (e.data.errors.title) {
+              this.$q.notify({
+                type: 'negative',
+                textColor: 'white',
+                message: e.data.errors.title
+              });
+            }
+          } else if (e.data.fileError) {
+            this.$q.loading.hide();
+
+            this.$q.notify({
+              type: 'negative',
+              textColor: 'white',
+              message: e.data.fileError
+            });
+          } else {
+            this.$q.loading.hide();
+
+            this.$q.notify({
+              type: 'negative',
+              message: 'Đã xảy ra lỗi khi đăng bài viết!!!'
+            });
+          }
         });
     }
   }

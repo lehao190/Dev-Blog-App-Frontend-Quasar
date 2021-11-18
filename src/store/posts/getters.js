@@ -1,3 +1,10 @@
+// Get loading state
+export function isLoading(state) {
+  return {
+    loading: state.loading
+  };
+}
+
 // Get All Posts
 export function getPosts(state) {
   return {

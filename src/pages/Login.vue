@@ -5,7 +5,7 @@
         <!-- Oauth Login -->
         <OauthProvs />
 
-        <div class="q-py-md relative-position" @click="getUsers">
+        <div class="q-py-md relative-position">
           <q-separator />
           <span
             class="text-body text-grey-8 bg-primary absolute-center text-center"
@@ -57,68 +57,76 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
-import OauthProvs from '../components/auth/OauthProvs.vue'
+import { mapActions } from 'vuex';
+import OauthProvs from '../components/auth/OauthProvs.vue';
 
 export default {
   components: {
     OauthProvs
   },
-  data () {
+  data() {
     return {
       email: '',
       password: ''
-    }
+    };
   },
   methods: {
-    ...mapActions('user', ['login', 'refresh']),
-    onSubmit () {
+    ...mapActions('user', ['login']),
+
+    onSubmit() {
+      this.$q.loading.show();
+
       this.login({
         email: this.email,
         password: this.password
-      }).then(() => {
-        if (this.$store.getters['user/getAuthenticated']) {
-          this.$router.push('/')
-        }
       })
-    },
+        .then(() => {
+          if (this.$store.getters['user/getAuthenticated']) {
+            this.$q.loading.hide();
 
-    // Refresh token incomplete
-    // async refresh () {
-    //   try {
-    //     const { data } = await api.post('/refresh_tokens', {
-    //       accessToken: this.$q.localStorage.getItem('accessToken')
-    //     })
+            this.$router.push('/');
+          } else {
+            this.$q.loading.hide();
+          }
+        })
+        .catch(e => {
+          if (e.data.name === 'BadRequest') {
+            this.$q.loading.hide();
 
-    //     this.$q.localStorage.set('accessToken', data.accessToken)
+            if (e.data.errors.email) {
+              this.$q.notify({
+                type: 'negative',
+                textColor: 'white',
+                message: e.data.errors.email
+              });
+            }
 
-    //     console.log('new access token: ', data)
-    //   } catch (error) {
-    //     this.$q.localStorage.clear()
+            if (e.data.errors.password) {
+              this.$q.notify({
+                type: 'negative',
+                textColor: 'white',
+                message: e.data.errors.password
+              });
+            }
+          } else if (e.data.name === 'NotAuthenticated') {
+            this.$q.loading.hide();
 
-    //     this.$store.commit({
-    //       type: 'user/USER_CREDENTIALS_RESET'
-    //     })
-    //   }
-    // },
+            this.$q.notify({
+              type: 'negative',
+              textColor: 'white',
+              message: e.data.message
+            });
+          } else {
+            this.$q.loading.hide();
 
-    async getUsers () {
-      this.refresh()
-      // try {
-      //   const { data } = await api.get('/users', {
-      //     headers: {
-      //       Authorization:
-      //         'Bearer ' + this.$q.localStorage.getItem('accessToken')
-      //     }
-      //   })
-
-      //   console.log('users data: ', data)
-      // } catch (error) {
-      //   console.log(error.message)
-
-      //   this.refresh()
-      // }
+            this.$q.notify({
+              type: 'negative',
+              textColor: 'white',
+              message: 'Đã xảy ra lỗi!!!'
+            });
+          }
+        });
     }
   }
-}
+};
 </script>

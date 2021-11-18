@@ -97,7 +97,9 @@ export default {
       this.postId = this.post.id;
       this.title = this.post.title;
       this.postImage = this.post.post_image;
-      this.userAvatar = this.post.user_profile.user_avatar;
+      this.userAvatar = this.post.user_profile.user_avatar
+        ? this.post.user_profile.user_avatar
+        : 'https://cdn.quasar.dev/img/boy-avatar.png';
       this.username = this.post.user_profile.username;
       this.createdAt = this.post.created_at;
       this.tags = this.post.tags;
@@ -108,7 +110,9 @@ export default {
       this.postId = this.post.id;
       this.title = this.post.title;
       this.postImage = this.post.post_image;
-      this.userAvatar = this.post.user_avatar;
+      this.userAvatar = this.post.user_avatar
+        ? this.post.user_avatar
+        : 'https://cdn.quasar.dev/img/boy-avatar.png';
       this.username = this.post.username;
       this.createdAt = this.post.created_at;
       this.tags = this.post.tags;

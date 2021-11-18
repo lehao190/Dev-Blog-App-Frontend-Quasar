@@ -4,10 +4,10 @@
       Welcome to Dev Blogger Community
     </h5>
 
-    <p class="text-center">
+    <!-- <p class="text-center">
       <b class="text-secondary">Cộng Đồng Dev Blogger</b> là cộng đồng gồm có
       589,000 các developer tài năng
-    </p>
+    </p> -->
 
     <!-- Login with Oauth Providers -->
     <div class="q-py-sm q-gutter-sm">

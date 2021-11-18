@@ -43,15 +43,15 @@ export default {
   props: ['tag', 'isAuthUser'],
 
   watch: {
-    isAuthUser () {
-      this.isFollowed = this.tag.followed
+    isAuthUser() {
+      this.isFollowed = this.tag.followed;
     }
   },
 
-  data () {
+  data() {
     return {
       isFollowed: false
-    }
+    };
   },
 
   computed: {
@@ -60,8 +60,11 @@ export default {
 
   methods: {
     ...mapActions('tags', ['followTag']),
+    ...mapActions('user', ['refresh']),
 
     onFollowTag() {
+      this.$q.loading.show();
+
       const token = LocalStorage.getItem('accessToken');
 
       if (this.getUser.authenticated) {
@@ -73,16 +76,48 @@ export default {
         })
           .then(() => {
             if (this.isFollowed) {
-              this.isFollowed = false
+              this.isFollowed = false;
             } else {
-              this.isFollowed = true
+              this.isFollowed = true;
             }
+
+            this.$q.loading.hide();
           })
-          .catch((e) => {
-            console.log('error follow tag: ', e)
-          })
+          .catch(e => {
+            if (e.data.data.name === 'TokenExpiredError') {
+              this.refresh()
+                .then(() => {
+                  this.$q.loading.hide();
+
+                  this.$q.notify({
+                    type: 'warning',
+                    textColor: 'white',
+                    message: 'Bạn vui lòng thực hiện lại thao tác!!!'
+                  });
+                })
+                .catch(() => {
+                  this.$q.loading.hide();
+
+                  this.$q.notify({
+                    type: 'negative',
+                    message: 'Bạn đã hết thời hạn đăng nhập!!!'
+                  });
+
+                  this.$router.push('/login');
+                });
+            } else {
+              this.$q.loading.hide();
+
+              this.$q.notify({
+                type: 'negative',
+                message: 'Đã xảy ra lỗi hệ thống!!!'
+              });
+            }
+          });
       } else {
-        this.$router.push('/login')
+        this.$q.loading.hide();
+
+        this.$router.push('/login');
       }
     }
   }

@@ -54,7 +54,13 @@
             <div>
               <router-link :to="'/users/' + this.userId">
                 <q-avatar size="54px">
-                  <img :src="userAvatar" />
+                  <img
+                    :src="
+                      userAvatar
+                        ? userAvatar
+                        : 'https://cdn.quasar.dev/img/boy-avatar.png'
+                    "
+                  />
                 </q-avatar>
               </router-link>
             </div>
@@ -112,7 +118,7 @@
                 <img
                   :src="
                     getUser.user.user_avatar ||
-                      'https://cdn.quasar.dev/img/avatar.png'
+                      'https://cdn.quasar.dev/img/boy-avatar.png'
                   "
                 />
               </q-avatar>
@@ -182,7 +188,13 @@
           style="top: 86px; margin-left: 0px; width: 320px;"
         >
           <q-avatar>
-            <img :src="userAvatar" />
+            <img
+              :src="
+                userAvatar
+                  ? userAvatar
+                  : 'https://cdn.quasar.dev/img/boy-avatar.png'
+              "
+            />
           </q-avatar>
 
           <span class="q-ml-sm text-body1 text-weight-bold">{{
@@ -216,6 +228,8 @@ import VueMarkdown from 'vue-markdown';
 
 export default {
   mounted() {
+    this.$q.loading.show();
+
     const hashURL = window.location.hash.split('/posts/');
 
     // Get post info
@@ -248,8 +262,11 @@ export default {
           .then(() => {
             this.comments = this.getOnePost.post.comments;
           })
-          .catch(e => {
-            console.log('error comments: ', e);
+          .catch(() => {
+            this.$q.notify({
+              type: 'negative',
+              message: 'Đã xảy ra lỗi khi tải nội dung!!!'
+            });
           });
 
         // Check liked post for auth user
@@ -264,12 +281,41 @@ export default {
               this.authUserLiked = this.getOnePost.post.authUserLiked;
             })
             .catch(e => {
-              console.log('error from likedPost: ', e);
+              if (e.data.data.name === 'TokenExpiredError') {
+                this.refresh()
+                  .then(() => {
+                    this.$q.notify({
+                      type: 'warning',
+                      textColor: 'white',
+                      message: 'Bạn vui lòng thực hiện lại thao tác!!!'
+                    });
+                  })
+                  .catch(() => {
+                    this.$q.notify({
+                      type: 'negative',
+                      message: 'Bạn đã hết thời hạn đăng nhập!!!'
+                    });
+
+                    this.$router.push('/login');
+                  });
+              } else {
+                this.$q.notify({
+                  type: 'negative',
+                  message: 'Đã xảy ra lỗi khi tải nội dung!!!'
+                });
+              }
             });
         }
+
+        this.$q.loading.hide();
       })
-      .catch(e => {
-        console.log('error post: ', e);
+      .catch(() => {
+        this.$q.loading.hide();
+
+        this.$q.notify({
+          type: 'negative',
+          message: 'Đã xảy ra lỗi khi tải nội dung!!!'
+        });
       });
   },
 
@@ -290,7 +336,7 @@ export default {
       saves: 0,
       authUserSaved: false,
       commentText: '',
-      comments: [],
+      comments: []
     };
   },
 
@@ -311,9 +357,12 @@ export default {
       'createComment',
       'getAllComments'
     ]),
+    ...mapActions('user', ['refresh']),
 
     // Like Post
     onLike() {
+      this.$q.loading.show();
+
       const token = LocalStorage.getItem('accessToken');
 
       if (this.getUser.authenticated) {
@@ -328,22 +377,51 @@ export default {
           .then(() => {
             this.likes = this.getOnePost.post.count_likes;
             this.authUserLiked = this.getOnePost.post.authUserLiked;
+
+            this.$q.loading.hide();
           })
           .catch(e => {
-            console.log('Error: ', e);
+            if (e.data.data.name === 'TokenExpiredError') {
+              this.refresh()
+                .then(() => {
+                  this.$q.loading.hide();
 
-            this.$q.notify({
-              type: 'negative',
-              message: 'ERROR MATE!!!'
-            });
+                  this.$q.notify({
+                    type: 'warning',
+                    textColor: 'white',
+                    message: 'Bạn vui lòng thực hiện lại thao tác!!!'
+                  });
+                })
+                .catch(() => {
+                  this.$q.loading.hide();
+
+                  this.$q.notify({
+                    type: 'negative',
+                    message: 'Bạn đã hết thời hạn đăng nhập!!!'
+                  });
+
+                  this.$router.push('/login');
+                });
+            } else {
+              this.$q.loading.hide();
+
+              this.$q.notify({
+                type: 'negative',
+                message: 'Đã xảy ra lỗi khi tải nội dung!!!'
+              });
+            }
           });
       } else {
+        this.$q.loading.hide();
+
         this.$router.push('/login');
       }
     },
 
     // Create Comment
     onComment() {
+      this.$q.loading.show();
+
       const token = LocalStorage.getItem('accessToken');
 
       if (this.getUser.authenticated) {
@@ -358,18 +436,45 @@ export default {
           token
         })
           .then(() => {
-            this.commentText = ''
-            this.comments = this.getOnePost.post.comments
+            this.commentText = '';
+            this.comments = this.getOnePost.post.comments;
+
+            this.$q.loading.hide();
           })
           .catch(e => {
-            console.log('Error: ', e);
+            if (!e.data.name === 'BadRequest' && e.data.data.name === 'TokenExpiredError') {
+              this.refresh()
+                .then(() => {
+                  this.$q.loading.hide();
 
-            this.$q.notify({
-              type: 'negative',
-              message: 'ERROR MATE!!!'
-            });
+                  this.$q.notify({
+                    type: 'warning',
+                    textColor: 'white',
+                    message: 'Bạn vui lòng thực hiện lại thao tác!!!'
+                  });
+                })
+                .catch(() => {
+                  this.$q.loading.hide();
+
+                  this.$q.notify({
+                    type: 'negative',
+                    message: 'Bạn đã hết thời hạn đăng nhập!!!'
+                  });
+
+                  this.$router.push('/login');
+                });
+            } else {
+              this.$q.loading.hide();
+
+              this.$q.notify({
+                type: 'negative',
+                message: 'Đã xảy ra lỗi khi đăng bình luận!!!'
+              });
+            }
           });
       } else {
+        this.$q.loading.hide();
+
         this.$router.push('/login');
       }
     }

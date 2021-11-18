@@ -46,7 +46,7 @@
       <!-- Right sidebar -->
       <aside class="col-3 gt-md">
         <!-- User's Pinned Posts -->
-        <q-card flat bordered class="my-card">
+        <!-- <q-card flat bordered class="my-card">
           <q-card-section>
             <div class="text-h6 text-weight-bold">Bài viết đã lưu</div>
           </q-card-section>
@@ -54,7 +54,7 @@
           <PinnedPost />
 
           <PinnedPost />
-        </q-card>
+        </q-card> -->
       </aside>
     </div>
   </q-page>
@@ -64,7 +64,7 @@
 import IntroSec from '../components/home_page/IntroSec';
 import UserNav from '../components/home_page/UserNav';
 import UserNavTag from '../components/home_page/UserNavTag';
-import PinnedPost from '../components/home_page/PinnedPost';
+// import PinnedPost from '../components/home_page/PinnedPost';
 import Post from '../components/home_page/Post';
 
 import { mapActions, mapGetters } from 'vuex';
@@ -77,7 +77,7 @@ export default {
     IntroSec,
     UserNav,
     UserNavTag,
-    PinnedPost,
+    // PinnedPost,
     Post
   },
 
@@ -87,12 +87,15 @@ export default {
       isFollowedTags: 'latest'
     };
   },
+
   computed: {
     ...mapGetters('posts', ['getPosts']),
     ...mapGetters('user', ['getUser'])
   },
 
   mounted() {
+    this.$q.loading.show()
+
     if (this.getUser.authenticated) {
       const token = LocalStorage.getItem('accessToken');
 
@@ -104,9 +107,39 @@ export default {
         .then(() => {
           this.isFollowedTags = 'follwedTags';
           this.posts = this.getPosts.posts;
+
+          this.$q.loading.hide()
         })
         .catch(e => {
-          console.log('error posts: ', e);
+          if (e.data.data.name === 'TokenExpiredError') {
+            this.refresh()
+              .then(() => {
+                this.$q.loading.hide()
+
+                this.$q.notify({
+                  type: 'warning',
+                  textColor: 'white',
+                  message: 'Bạn vui lòng thực hiện lại thao tác!!!'
+                });
+              })
+              .catch(() => {
+                this.$q.loading.hide()
+
+                this.$q.notify({
+                  type: 'negative',
+                  message: 'Bạn đã hết thời hạn đăng nhập!!!'
+                });
+
+                this.$router.push('/login');
+              });
+          } else {
+            this.$q.loading.hide()
+
+            this.$q.notify({
+              type: 'negative',
+              message: 'Đã xảy ra lỗi khi tải nội dung!!!'
+            });
+          }
         });
     } else {
       // Get all latest posts
@@ -114,18 +147,28 @@ export default {
         .then(() => {
           this.isFollowedTags = 'latest';
           this.posts = this.getPosts.posts;
+
+          this.$q.loading.hide()
         })
-        .catch(e => {
-          console.log('error posts: ', e);
+        .catch(() => {
+          this.$q.loading.hide()
+
+          this.$q.notify({
+            type: 'negative',
+            message: 'Đã xảy ra lỗi khi tải nội dung!!!'
+          });
         });
     }
   },
 
   methods: {
     ...mapActions('posts', ['requestAllPosts', 'requestAllFollowedTagsPosts']),
+    ...mapActions('user', ['refresh']),
 
     changePostData() {
-      if (this.getUser.authenticated && this.isFollowedTags === "follwedTags") {
+      this.$q.loading.show()
+
+      if (this.getUser.authenticated && this.isFollowedTags === 'follwedTags') {
         const token = LocalStorage.getItem('accessToken');
 
         // Get all user follwed tags posts
@@ -136,9 +179,39 @@ export default {
           .then(() => {
             this.isFollowedTags = 'follwedTags';
             this.posts = this.getPosts.posts;
+
+            this.$q.loading.hide()
           })
           .catch(e => {
-            console.log('error posts: ', e);
+            if (e.data.data.name === 'TokenExpiredError') {
+              this.refresh()
+                .then(() => {
+                  this.$q.loading.hide()
+
+                  this.$q.notify({
+                    type: 'warning',
+                    textColor: 'white',
+                    message: 'Bạn vui lòng thực hiện lại thao tác!!!'
+                  });
+                })
+                .catch(() => {
+                  this.$q.loading.hide()
+
+                  this.$q.notify({
+                    type: 'negative',
+                    message: 'Bạn đã hết thời hạn đăng nhập!!!'
+                  });
+
+                  this.$router.push('/login');
+                });
+            } else {
+              this.$q.loading.hide()
+
+              this.$q.notify({
+                type: 'negative',
+                message: 'Đã xảy ra lỗi khi tải nội dung!!!'
+              });
+            }
           });
       } else {
         // Get all latest posts
@@ -146,9 +219,16 @@ export default {
           .then(() => {
             this.isFollowedTags = 'latest';
             this.posts = this.getPosts.posts;
+
+            this.$q.loading.hide()
           })
-          .catch(e => {
-            console.log('error posts: ', e);
+          .catch(() => {
+            this.$q.loading.hide()
+            
+            this.$q.notify({
+              type: 'negative',
+              message: 'Đã xảy ra lỗi khi tải nội dung!!!'
+            });
           });
       }
     }

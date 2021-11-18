@@ -21,7 +21,7 @@
           no-caps
         />
 
-        <q-btn
+        <!-- <q-btn
           @click="tableOption = 'saved_post'"
           :class="[
             tableOption === 'saved_post'
@@ -32,9 +32,10 @@
           align="left"
           label="Bài viết đã lưu"
           no-caps
-        />
+        /> -->
 
         <q-btn
+          v-if="getUser.user.admin === true"
           @click="tableOption = 'tag'"
           :class="[
             tableOption === 'tag'
@@ -49,6 +50,7 @@
 
         <q-btn
           @click="tableOption = 'user'"
+          v-if="getUser.user.admin === true"
           :class="[
             tableOption === 'user'
               ? 'full-width bg-grey-4 text-weight-thin'
@@ -89,14 +91,14 @@
               @selectedTags="onSelectedItems"
               @unsetReset="unset"
               :reset="reset"
-              v-if="this.tableOption === 'tag'"
+              v-if="this.tableOption === 'tag' && getUser.user.admin === true"
             />
 
             <UserTable
               @selectedUsers="onSelectedItems"
               @unsetReset="unset"
               :reset="reset"
-              v-if="this.tableOption === 'user'"
+              v-if="this.tableOption === 'user' && getUser.user.admin === true"
             />
 
             <PostTable
@@ -106,7 +108,7 @@
               v-if="this.tableOption === 'post'"
             />
 
-            <SavedPostTable v-if="this.tableOption === 'saved_post'" />
+            <!-- <SavedPostTable v-if="this.tableOption === 'saved_post'" /> -->
             <!-- <FollowedTagTable v-if="this.tableOption === 'followed_tag'" /> -->
           </div>
         </div>
@@ -119,31 +121,36 @@
 import TagTable from '../components/dashboard/TagTable.vue';
 // import FollowedTagTable from '../components/dashboard/FollowedTagTable.vue';
 import PostTable from '../components/dashboard/PostTable.vue';
-import SavedPostTable from '../components/dashboard/SavedPostTable.vue';
+// import SavedPostTable from '../components/dashboard/SavedPostTable.vue';
 import UserTable from '../components/dashboard/UserTable.vue';
 
 import { mapActions, mapGetters } from 'vuex';
 import { LocalStorage } from 'quasar';
 
 export default {
+  mounted () {
+    if (this.getUser.authenticated === false) {
+      this.$router.push('/')
+    }
+  },
+
   data() {
     return {
-      tableOption: 'user',
+      tableOption: 'post',
       selectedItems: [],
       reset: false
     };
   },
 
-  // computed: {
-  //   ...mapGetters('tags', ['getTags']),
-  //   ...mapGetters('user', ['getUsers'])
-  // },
+  computed: {
+    ...mapGetters('user', ['getUser'])
+  },
 
   components: {
     TagTable,
     // FollowedTagTable,
     PostTable,
-    SavedPostTable,
+    // SavedPostTable,
     UserTable
   },
   methods: {

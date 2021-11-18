@@ -1,10 +1,9 @@
 <template>
   <q-card class="my-card">
     <q-card-section>
-      <span class="text-subtitle1 text-weight-bold"
-        ><b class="text-secondary">Cộng Đồng Dev Blogger</b> là cộng đồng gồm có
-        589,000 các developer tài năng</span
-      >
+      <span class="text-subtitle1 text-weight-bold">
+        <b class="text-secondary">Xin Chào Bạn Đến Với Dev Blogger</b>
+      </span>
       <p>
         Đây là nơi mà mọi người cùng nhau chia sẽ kinh nghiệm, kỹ năng lập trình
       </p>

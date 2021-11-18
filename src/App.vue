@@ -12,6 +12,9 @@ export default {
     this.$store.dispatch({
       type: 'user/me'
     })
+      .catch(() => {
+        return
+      })
   }
 }
 </script>

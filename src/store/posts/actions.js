@@ -22,6 +22,37 @@ export async function requestAllPosts({ commit }) {
       type: POSTS_FAILURE,
       error: postsError.response
     });
+
+    throw postsError.response
+  }
+
+  const { data } = postsData;
+
+  commit({
+    type: POSTS_SUCCESS,
+    posts: data
+  });
+}
+
+// Searching Posts
+export async function searchPosts({ commit }, payload) {
+  const { title } = payload
+
+  commit({
+    type: POSTS_REQUEST
+  });
+
+  const [postsData, postsError] = await handle(
+    api.get(`/posts?title[$like]=%${title}%`)
+  );
+
+  if (postsError) {
+    commit({
+      type: POSTS_FAILURE,
+      error: postsError.response
+    });
+
+    throw postsError.response
   }
 
   const { data } = postsData;

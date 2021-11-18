@@ -4,7 +4,12 @@
 
     <div class="row q-py-md q-col-gutter-lg">
       <!-- Display Tags -->
-      <Tag v-for="tag in this.tags" :key="tag.id" :tag="tag" :isAuthUser="isAuthUser"/>
+      <Tag
+        v-for="tag in this.tags"
+        :key="tag.id"
+        :tag="tag"
+        :isAuthUser="isAuthUser"
+      />
     </div>
   </q-page>
 </template>
@@ -21,9 +26,11 @@ export default {
   },
 
   mounted() {
+    this.$q.loading.show();
+
     this.getAllTags()
-      .then (() => {
-        this.tags = this.getTags.tags
+      .then(() => {
+        this.tags = this.getTags.tags;
 
         if (this.getUser.authenticated) {
           const token = LocalStorage.getItem('accessToken');
@@ -34,23 +41,58 @@ export default {
             tags: this.tags
           })
             .then(() => {
-              this.isAuthUser = true
+              this.isAuthUser = true;
             })
             .catch(e => {
-              console.log('error from followed tags: ', e);
+              if (e.data.data.name === 'TokenExpiredError') {
+                this.refresh()
+                  .then(() => {
+                    this.$q.loading.hide();
+
+                    this.$q.notify({
+                      type: 'warning',
+                      textColor: 'white',
+                      message: 'Bạn vui lòng thực hiện lại thao tác!!!'
+                    });
+                  })
+                  .catch(() => {
+                    this.$q.loading.hide();
+
+                    this.$q.notify({
+                      type: 'negative',
+                      message: 'Bạn đã hết thời hạn đăng nhập!!!'
+                    });
+
+                    this.$router.push('/login');
+                  });
+              } else {
+                this.$q.loading.hide();
+
+                this.$q.notify({
+                  type: 'negative',
+                  message: 'Đã xảy ra lỗi khi tải nội dung!!!'
+                });
+              }
             });
         }
+
+        this.$q.loading.hide();
       })
-      .catch((e) => {
-        console.log('error tag: ', e)
-      })
+      .catch(() => {
+        this.$q.loading.hide();
+
+        this.$q.notify({
+          type: 'negative',
+          message: 'Đã xảy ra lỗi khi tải nội dung!!!'
+        });
+      });
   },
 
-  data () {
+  data() {
     return {
       tags: [],
       isAuthUser: false
-    }
+    };
   },
 
   computed: {
@@ -59,7 +101,8 @@ export default {
   },
 
   methods: {
-    ...mapActions('tags', ['getAllTags', 'getAuthUserFollowedTags'])
+    ...mapActions('tags', ['getAllTags', 'getAuthUserFollowedTags']),
+    ...mapActions('user', ['refresh'])
   }
 };
 </script>

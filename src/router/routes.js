@@ -36,6 +36,11 @@ const routes = [
         component: () => import('pages/UserPost.vue')
       },
       {
+        path: '/search',
+        name: 'search',
+        component: () => import('pages/SearchPosts.vue')
+      },
+      {
         path: '/users/:id',
         name: 'user_profile',
         component: () => import('pages/UserProfile.vue')

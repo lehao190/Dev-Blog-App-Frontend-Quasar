@@ -109,8 +109,10 @@ export async function requestUser({ commit }, payload) {
 export async function me({ commit }) {
   const hashURL = window.location.hash.split('#/#access_token=');
 
+  const token = LocalStorage.getItem('accessToken')
+
   // Save access token to LocalStorage only for Oauth Authentication
-  if (hashURL[1]) {
+  if (hashURL[1] && !token) {
     const accessToken = hashURL[1];
 
     LocalStorage.set('accessToken', accessToken);
@@ -126,10 +128,12 @@ export async function me({ commit }) {
     const [userData, userError] = await handle(api.get('/me'));
 
     if (userError) {
-      return commit({
+      commit({
         type: USER_CREDENTIALS_FAILURE,
         error: userError.response
       });
+
+      throw userError.response
     }
 
     const { data } = userData;
@@ -162,10 +166,12 @@ export async function login({ commit }, payload) {
   );
 
   if (userError) {
-    return commit({
+    commit({
       type: USER_CREDENTIALS_FAILURE,
       error: userError.response
     });
+
+    throw userError.response
   }
 
   const { user, accessToken } = userData.data;
@@ -200,10 +206,12 @@ export async function register({ commit }, payload) {
   );
 
   if (userErrorRegister) {
-    return commit({
+    commit({
       type: USER_CREDENTIALS_FAILURE,
       error: userErrorRegister.response
     });
+
+    throw userErrorRegister.response
   }
 
   // Login
@@ -216,10 +224,12 @@ export async function register({ commit }, payload) {
   );
 
   if (userError) {
-    return commit({
+    commit({
       type: USER_CREDENTIALS_FAILURE,
       error: userError.response
     });
+
+    throw userError.response
   }
 
   const { user, accessToken } = userData.data;
@@ -234,7 +244,7 @@ export async function register({ commit }, payload) {
 }
 
 // Refresh the existing token
-export async function refresh({ commit }, payload) {
+export async function refresh({ commit }) {
   const [data, error] = await handle(
     api.post('/refresh_tokens', {
       accessToken: LocalStorage.getItem('accessToken')
@@ -242,17 +252,15 @@ export async function refresh({ commit }, payload) {
   );
 
   if (error) {
-    console.log('refresh error: ', error);
-
     LocalStorage.clear();
 
-    return commit({
+    commit({
       type: USER_CREDENTIALS_RESET,
       error: error.response
     });
-  }
 
-  console.log('from refresh Endpoint: ', data);
+    throw error.response
+  }
 
   LocalStorage.set('accessToken', data.data.accessToken);
 }
@@ -262,10 +270,12 @@ export async function logout({ commit }) {
   const [data, error] = await handle(api.post('logout'));
 
   if (error) {
-    return commit({
+    commit({
       type: USER_CREDENTIALS_RESET,
       error: error.response
     });
+
+    throw error.response
   }
 
   LocalStorage.clear();
