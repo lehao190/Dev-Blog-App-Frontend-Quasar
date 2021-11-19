@@ -24,7 +24,6 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
-// import { LocalStorage } from 'quasar';
 
 export default {
   props: ['reset'],
@@ -48,13 +47,6 @@ export default {
           label: 'ID bài viết',
           field: 'id'
         },
-        // {
-        //   name: 'email',
-        //   label: 'Email người tạo',
-        //   field: 'email',
-        //   align: 'center',
-        //   field: row => row.user_profile.email
-        // },
         {
           name: 'created_at',
           label: 'Tạo lúc',
@@ -74,21 +66,52 @@ export default {
   },
 
   computed: {
-    ...mapGetters('posts', ['getPosts'])
+    ...mapGetters('posts', ['getPosts']),
+    ...mapGetters('user', ['getUser'])
   },
 
-  async mounted() {
-    await this.requestAllPosts()
-  
-    // const token = LocalStorage.getItem('accessToken'); 
+  mounted() {
+    window.addEventListener('resize', this.onResize);
 
-    // this.requestAllPosts()
-      // .then(() => {
-      //   this.data = this.getPosts.posts;
-      // })
-      // .catch(e => {
-      //   console.log('error get users: ', e);
-      // });
+    if (window.innerWidth <= 600) {
+      this.isGrid = true;
+    }
+
+    this.$q.loading.show();
+
+    if (this.getUser.user.admin === true) {
+      this.requestAllPosts()
+        .then(() => {
+          this.$q.loading.hide();
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+
+          this.$q.notify({
+            type: 'negative',
+            message: 'Đã xảy ra lỗi khi tải nội dung!!!'
+          });
+        });
+    } else {
+      this.requestAllUserPosts({
+        userId: this.getUser.user.id
+      })
+        .then(() => {
+          this.$q.loading.hide();
+        })
+        .catch(() => {
+          this.$q.loading.hide();
+
+          this.$q.notify({
+            type: 'negative',
+            message: 'Đã xảy ra lỗi khi tải nội dung!!!'
+          });
+        });
+    }
+  },
+
+  beforeDestroy() {
+    window.removeEventListener('resize', this.onResize);
   },
 
   watch: {
@@ -102,7 +125,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('posts', ['requestAllPosts']),
+    ...mapActions('posts', ['requestAllPosts', 'requestAllUserPosts']),
 
     onSelected(newSelected) {
       this.$emit('selectedPosts', newSelected);
@@ -114,6 +137,12 @@ export default {
         : `${this.selected.length} record${
             this.selected.length > 1 ? 's' : ''
           } selected of ${this.data.length}`;
+    },
+
+    onResize() {
+      if (window.innerWidth <= 600) {
+        this.isGrid = true;
+      }
     }
   }
 };

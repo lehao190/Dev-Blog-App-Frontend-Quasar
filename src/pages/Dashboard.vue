@@ -128,9 +128,9 @@ import { mapActions, mapGetters } from 'vuex';
 import { LocalStorage } from 'quasar';
 
 export default {
-  mounted () {
+  mounted() {
     if (this.getUser.authenticated === false) {
-      this.$router.push('/')
+      this.$router.push('/');
     }
   },
 
@@ -155,7 +155,7 @@ export default {
   },
   methods: {
     ...mapActions('tags', ['deleteTags']),
-    ...mapActions('user', ['deleteUsers']),
+    ...mapActions('user', ['deleteUsers', 'refresh']),
     ...mapActions('posts', ['deletePosts']),
 
     onSelectedItems(value) {
@@ -177,13 +177,54 @@ export default {
 
     // Delete posts, users, tags...
     onDelete() {
+      this.$q.loading.show();
+
       const token = LocalStorage.getItem('accessToken');
 
       if (this.tableOption === 'user') {
         this.deleteUsers({
           token,
           users: this.selectedItems
-        });
+        })
+          .then(() => {
+            this.$q.loading.hide();
+
+            this.$q.notify({
+              type: 'positive',
+              message: 'Xóa thành công!!!'
+            });
+          })
+          .catch(e => {
+            if (e.data.data.name === 'TokenExpiredError') {
+              this.refresh()
+                .then(() => {
+                  this.$q.loading.hide();
+
+                  this.$q.notify({
+                    type: 'warning',
+                    textColor: 'white',
+                    message: 'Bạn vui lòng thực hiện lại thao tác!!!'
+                  });
+                })
+                .catch(() => {
+                  this.$q.loading.hide();
+
+                  this.$q.notify({
+                    type: 'negative',
+                    message: 'Bạn đã hết thời hạn đăng nhập!!!'
+                  });
+
+                  this.$router.push('/login');
+                });
+            } else {
+              this.$q.loading.hide();
+
+              this.$q.notify({
+                type: 'negative',
+                message: 'Đã xảy ra lỗi khi thực hiện thao tác!!!'
+              });
+            }
+          });
 
         return (this.reset = true);
       }
@@ -192,7 +233,46 @@ export default {
         this.deleteTags({
           token,
           tags: this.selectedItems
-        });
+        })
+          .then(() => {
+            this.$q.loading.hide();
+
+            this.$q.notify({
+              type: 'positive',
+              message: 'Xóa thành công!!!'
+            });
+          })
+          .catch(e => {
+            if (e.data.data.name === 'TokenExpiredError') {
+              this.refresh()
+                .then(() => {
+                  this.$q.loading.hide();
+
+                  this.$q.notify({
+                    type: 'warning',
+                    textColor: 'white',
+                    message: 'Bạn vui lòng thực hiện lại thao tác!!!'
+                  });
+                })
+                .catch(() => {
+                  this.$q.loading.hide();
+
+                  this.$q.notify({
+                    type: 'negative',
+                    message: 'Bạn đã hết thời hạn đăng nhập!!!'
+                  });
+
+                  this.$router.push('/login');
+                });
+            } else {
+              this.$q.loading.hide();
+
+              this.$q.notify({
+                type: 'negative',
+                message: 'Đã xảy ra lỗi khi thực hiện thao tác!!!'
+              });
+            }
+          });
 
         return (this.reset = true);
       }
@@ -202,6 +282,45 @@ export default {
           token,
           posts: this.selectedItems
         })
+          .then(() => {
+            this.$q.loading.hide();
+
+            this.$q.notify({
+              type: 'positive',
+              message: 'Xóa thành công!!!'
+            });
+          })
+          .catch(e => {
+            if (e.data.data.name === 'TokenExpiredError') {
+              this.refresh()
+                .then(() => {
+                  this.$q.loading.hide();
+
+                  this.$q.notify({
+                    type: 'warning',
+                    textColor: 'white',
+                    message: 'Bạn vui lòng thực hiện lại thao tác!!!'
+                  });
+                })
+                .catch(() => {
+                  this.$q.loading.hide();
+
+                  this.$q.notify({
+                    type: 'negative',
+                    message: 'Bạn đã hết thời hạn đăng nhập!!!'
+                  });
+
+                  this.$router.push('/login');
+                });
+            } else {
+              this.$q.loading.hide();
+
+              this.$q.notify({
+                type: 'negative',
+                message: 'Đã xảy ra lỗi khi thực hiện thao tác!!!'
+              });
+            }
+          });
 
         return (this.reset = true);
       }

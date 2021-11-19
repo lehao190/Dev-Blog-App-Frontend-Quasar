@@ -155,7 +155,13 @@
             <!-- Avatar -->
             <div>
               <q-avatar size="lg">
-                <img :src="comment.user_avatar" />
+                <img
+                  :src="
+                    comment.user_avatar
+                      ? comment.user_avatar
+                      : 'https://cdn.quasar.dev/img/boy-avatar.png'
+                  "
+                />
               </q-avatar>
             </div>
 
@@ -241,10 +247,26 @@ export default {
 
         const { post } = this.getOnePost;
 
+        // Post Date
+        // const postDate = new Date(post.created_at);
+        // const postMonth = postDate.getUTCMonth() + 1; //months from 1-12
+        // const postDay = postDate.getUTCDate();
+        // const postYear = postDate.getUTCFullYear();
+        // const postNewDate = postDay + '/' + postMonth + '/' + postYear;
+        // const postDate = new Date(this.post.created_at);
+        
+        // User Date 
+        // const userDate = new Date(post.user_profile.created_at);
+        // const userMonth = userDate.getUTCMonth() + 1; //months from 1-12
+        // const userDay = userDate.getUTCDate();
+        // const userYear = userDate.getUTCFullYear();
+        // const userNewDate = userDay + '/' + userMonth + '/' + userYear;
+
         this.postId = post.id;
         this.title = post.title;
         this.body = post.body;
         this.createdAt = post.created_at;
+        // this.createdAt = postNewDate;
         this.postImage = post.post_image;
         this.tags = post.tags;
         this.userId = post.userId;
@@ -311,6 +333,8 @@ export default {
       })
       .catch(() => {
         this.$q.loading.hide();
+
+        this.$router.push('/');
 
         this.$q.notify({
           type: 'negative',
@@ -442,7 +466,10 @@ export default {
             this.$q.loading.hide();
           })
           .catch(e => {
-            if (!e.data.name === 'BadRequest' && e.data.data.name === 'TokenExpiredError') {
+            if (
+              !e.data.name === 'BadRequest' &&
+              e.data.data.name === 'TokenExpiredError'
+            ) {
               this.refresh()
                 .then(() => {
                   this.$q.loading.hide();

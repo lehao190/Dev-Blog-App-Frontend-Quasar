@@ -56,7 +56,7 @@
           unelevated
         />
 
-        <q-btn
+        <!-- <q-btn
           :label="comments + ' Bình luận'"
           color="primary"
           text-color="secondary"
@@ -64,7 +64,7 @@
           size="12px"
           no-caps
           unelevated
-        />
+        /> -->
 
         <q-space />
       </q-card-actions>
@@ -92,6 +92,13 @@ export default {
   },
 
   mounted() {
+    // Date Format
+    const date = new Date(this.post.created_at);
+    const month = date.getUTCMonth() + 1; //months from 1-12
+    const day = date.getUTCDate();
+    const year = date.getUTCFullYear();
+    const newDate = day + '/' + month + '/' + year;
+
     if (this.isFollowedTags === 'latest' || !this.isFollowedTags) {
       this.userId = this.post.userId;
       this.postId = this.post.id;
@@ -101,7 +108,8 @@ export default {
         ? this.post.user_profile.user_avatar
         : 'https://cdn.quasar.dev/img/boy-avatar.png';
       this.username = this.post.user_profile.username;
-      this.createdAt = this.post.created_at;
+      // this.createdAt = this.post.created_at;
+      this.createdAt = newDate;
       this.tags = this.post.tags;
       this.likes = this.post.count_likes;
       this.comments = 0;
@@ -114,7 +122,8 @@ export default {
         ? this.post.user_avatar
         : 'https://cdn.quasar.dev/img/boy-avatar.png';
       this.username = this.post.username;
-      this.createdAt = this.post.created_at;
+      // this.createdAt = this.post.created_at;
+      this.createdAt = newDate;
       this.tags = this.post.tags;
       this.likes = this.post.count_likes;
       this.comments = 0;

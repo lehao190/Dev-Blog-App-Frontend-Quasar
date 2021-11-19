@@ -53,6 +53,8 @@ import { LocalStorage } from 'quasar';
 
 export default {
   mounted() {
+    this.$q.loading.show();
+
     const token = LocalStorage.getItem('accessToken');
     const hashURL = window.location.hash.split('/users/edit/');
 
@@ -64,9 +66,39 @@ export default {
         this.userId = this.getEditUser.editUser.id;
         this.username = this.getEditUser.editUser.username;
         this.userAvatar = this.getEditUser.editUser.user_avatar;
+
+        this.$q.loading.hide();
       })
       .catch(e => {
-        console.log('error get user edit: ', e);
+        if (e.data.data.name === 'TokenExpiredError') {
+          this.refresh()
+            .then(() => {
+              this.$q.loading.hide();
+
+              this.$q.notify({
+                type: 'warning',
+                textColor: 'white',
+                message: 'Bạn vui lòng thực hiện lại thao tác!!!'
+              });
+            })
+            .catch(() => {
+              this.$q.loading.hide();
+
+              this.$q.notify({
+                type: 'negative',
+                message: 'Bạn đã hết thời hạn đăng nhập!!!'
+              });
+
+              this.$router.push('/login');
+            });
+        } else {
+          this.$q.loading.hide();
+
+          this.$q.notify({
+            type: 'negative',
+            message: 'Đã xảy ra lỗi khi tải nội dung!!!'
+          });
+        }
       });
   },
 
@@ -85,24 +117,26 @@ export default {
   },
 
   methods: {
-    ...mapActions('user', ['requestEditUser', 'editUser']),
+    ...mapActions('user', ['requestEditUser', 'editUser', 'refresh']),
 
     onEditUser() {
+      this.$q.loading.show();
+
       const token = LocalStorage.getItem('accessToken');
 
-      let hashAvatar
+      let hashAvatar;
 
       if (this.userAvatar) {
-        hashAvatar = this.userAvatar.split('dev-blogger-app.appspot.com/o/')
+        hashAvatar = this.userAvatar.split('dev-blogger-app.appspot.com/o/');
 
         if (hashAvatar[0] === 'https://firebasestorage.googleapis.com/v0/b/') {
-          hashAvatar = hashAvatar[1].split('?alt')
-          
-          hashAvatar = hashAvatar[0]
-          this.firebaseImage = true
+          hashAvatar = hashAvatar[1].split('?alt');
+
+          hashAvatar = hashAvatar[0];
+          this.firebaseImage = true;
         } else {
-          hashAvatar = hashAvatar[0]
-          this.firebaseImage = false
+          hashAvatar = hashAvatar[0];
+          this.firebaseImage = false;
         }
       }
 
@@ -115,10 +149,45 @@ export default {
         token
       })
         .then(() => {
+          this.$q.loading.hide();
+
           this.$router.push(`/users/${this.userId}`);
+
+          this.$q.notify({
+            type: 'positive',
+            message: 'Sửa thành công!!!'
+          });
         })
         .catch(e => {
-          console.log('error user edit: ', e);
+          if (e.data.data.name === 'TokenExpiredError') {
+            this.refresh()
+              .then(() => {
+                this.$q.loading.hide();
+
+                this.$q.notify({
+                  type: 'warning',
+                  textColor: 'white',
+                  message: 'Bạn vui lòng thực hiện lại thao tác!!!'
+                });
+              })
+              .catch(() => {
+                this.$q.loading.hide();
+
+                this.$q.notify({
+                  type: 'negative',
+                  message: 'Bạn đã hết thời hạn đăng nhập!!!'
+                });
+
+                this.$router.push('/login');
+              });
+          } else {
+            this.$q.loading.hide();
+
+            this.$q.notify({
+              type: 'negative',
+              message: 'Đã xảy ra lỗi!!!'
+            });
+          }
         });
     }
   }

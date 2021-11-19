@@ -71,26 +71,48 @@ export default {
     ...mapGetters('user', ['getUsers'])
   },
 
-  async mounted () {
+  mounted() {
+    this.$q.loading.show()
+
     const token = LocalStorage.getItem('accessToken');
 
-    await this.requestAllUsers({
+    this.requestAllUsers({
       token
     })
+      .then(() => {
+        this.$q.loading.hide();
+      })
+      .catch(e => {
+        if (e.data.data.name === 'TokenExpiredError') {
+          this.refresh()
+            .then(() => {
+              this.$q.loading.hide();
 
-    // console.log(this.getUsers.users)
-    // this.data = this.getUsers.users
-    
-    // this.requestAllUsers({
-    //   token
-    // })
-    //   .then(() => {
-    //     console.log('users from requestAllUsers: ', this.getUsers.users)
-    //     this.data = this.getUsers.users;
-    //   })
-    //   .catch(e => {
-    //     console.log('error get users: ', e);
-    //   });
+              this.$q.notify({
+                type: 'warning',
+                textColor: 'white',
+                message: 'Bạn vui lòng thực hiện lại thao tác!!!'
+              });
+            })
+            .catch(() => {
+              this.$q.loading.hide();
+
+              this.$q.notify({
+                type: 'negative',
+                message: 'Bạn đã hết thời hạn đăng nhập!!!'
+              });
+
+              this.$router.push('/login');
+            });
+        } else {
+          this.$q.loading.hide();
+
+          this.$q.notify({
+            type: 'negative',
+            message: 'Đã xảy ra lỗi khi tải nội dung!!!'
+          });
+        }
+      });
   },
 
   watch: {
@@ -104,7 +126,7 @@ export default {
   },
 
   methods: {
-    ...mapActions('user', ['requestAllUsers']),
+    ...mapActions('user', ['requestAllUsers', 'refresh']),
 
     onSelected(newSelected) {
       this.$emit('selectedUsers', newSelected);

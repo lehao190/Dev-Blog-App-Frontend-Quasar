@@ -26,29 +26,31 @@
 import { mapActions, mapGetters } from 'vuex';
 
 export default {
-  // created() {
-  //   // if (window.innerWidth <= 600) {
-  //   //   this.isGrid = true
-  //   // }
+  mounted() {
+    window.addEventListener('resize', this.onResize);
 
-  //   window.addEventListener('resize', function(event) {
-  //     console.log(window.innerWidth)
-  //   });
-  // },
-  // destroyed () {
-  //   window.removeEventListener('resize', function(event) {
-  //     console.log('Destroyed Linstener !!!')
-  //   })
-  // },
+    if (window.innerWidth <= 600) {
+      this.isGrid = true;
+    }
 
-  async mounted() {
-    await this.getAllTags();
-    // this.data = this.getTags.tags;
-    // window.addEventListener('change', this.onSelected);
+    this.$q.loading.show();
+
+    this.getAllTags()
+      .then(() => {
+        this.$q.loading.hide();
+      })
+      .catch(() => {
+        this.$q.loading.hide();
+
+        this.$q.notify({
+          type: 'negative',
+          message: 'Đã xảy ra lỗi khi tải nội dung!!!'
+        });
+      });
   },
 
   beforeDestroy() {
-    // window.removeEventListener('change', this.onSelected);
+    window.removeEventListener('resize', this.onResize);
   },
 
   props: ['reset'],
@@ -95,11 +97,11 @@ export default {
   },
 
   watch: {
-    reset (newVal) {
+    reset(newVal) {
       if (newVal === true) {
-        this.selected = []
+        this.selected = [];
 
-        this.$emit('unsetReset', false)
+        this.$emit('unsetReset', false);
       }
     }
   },
@@ -108,7 +110,7 @@ export default {
     ...mapActions('tags', ['getAllTags']),
 
     onSelected(newSelected) {
-      this.$emit('selectedTags', newSelected)
+      this.$emit('selectedTags', newSelected);
     },
 
     getSelectedString() {
@@ -117,6 +119,12 @@ export default {
         : `${this.selected.length} record${
             this.selected.length > 1 ? 's' : ''
           } selected of ${this.data.length}`;
+    },
+
+    onResize() {
+      if (window.innerWidth <= 600) {
+        this.isGrid = true;
+      }
     }
   }
 };
