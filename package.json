@@ -10,14 +10,11 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@feathersjs/feathers": "^4.5.11",
-    "@feathersjs/socketio-client": "^4.5.11",
     "@quasar/extras": "^1.0.0",
     "axios": "^0.21.1",
     "babel-runtime": "^6.26.0",
     "core-js": "^3.6.5",
     "quasar": "^1.0.0",
-    "socket.io-client": "^2.3.0",
     "vue-i18n": "^8.0.0",
     "vue-markdown": "^2.2.4"
   },

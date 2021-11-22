@@ -187,12 +187,15 @@ export default {
       search: ''
     };
   },
+
   computed: {
     ...mapGetters('user', ['getUser', 'getUserError']),
+
     authenticated: function() {
       return this.getUser.authenticated;
     }
   },
+
   methods: {
     ...mapActions('user', ['logout', 'refresh']),
 

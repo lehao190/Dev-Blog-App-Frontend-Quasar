@@ -325,9 +325,12 @@ export async function editUser({ commit }, payload) {
 
   const { data } = userData;
 
+  LocalStorage.set('user', data);
+
   commit({
     type: USER_CREDENTIALS_SUCCESS,
-    editUser: data
+    // editUser: data,
+    user: data
   });
 }
 
