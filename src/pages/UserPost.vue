@@ -230,6 +230,7 @@
 import { mapActions, mapGetters } from 'vuex';
 import { LocalStorage } from 'quasar';
 
+import { formatDate } from '../utils/handle_date'
 import VueMarkdown from 'vue-markdown';
 
 export default {
@@ -247,31 +248,18 @@ export default {
 
         const { post } = this.getOnePost;
 
-        // Post Date
-        // const postDate = new Date(post.created_at);
-        // const postMonth = postDate.getUTCMonth() + 1; //months from 1-12
-        // const postDay = postDate.getUTCDate();
-        // const postYear = postDate.getUTCFullYear();
-        // const postNewDate = postDay + '/' + postMonth + '/' + postYear;
-        // const postDate = new Date(this.post.created_at);
-        
-        // User Date 
-        // const userDate = new Date(post.user_profile.created_at);
-        // const userMonth = userDate.getUTCMonth() + 1; //months from 1-12
-        // const userDay = userDate.getUTCDate();
-        // const userYear = userDate.getUTCFullYear();
-        // const userNewDate = userDay + '/' + userMonth + '/' + userYear;
+        const userPostDate = formatDate(post.created_at)
+        const userProfileDate = formatDate(post.user_profile.created_at)
 
         this.postId = post.id;
         this.title = post.title;
         this.body = post.body;
-        this.createdAt = post.created_at;
-        // this.createdAt = postNewDate;
+        this.createdAt = userPostDate;
         this.postImage = post.post_image;
         this.tags = post.tags;
         this.userId = post.userId;
         this.username = post.user_profile.username;
-        this.userBirthday = post.user_profile.created_at;
+        this.userBirthday = userProfileDate;
         this.userAvatar = post.user_profile.user_avatar;
         this.likes = post.count_likes;
         this.saves = 0;

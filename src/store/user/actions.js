@@ -7,6 +7,7 @@ import {
   USER_CREDENTIALS_RESET
 } from '../mutation-types/userContants';
 import { handle } from '../../utils/handle_promise';
+import { formatDate } from '../../utils/handle_date';
 
 // Request All Users
 export async function requestAllUsers({ commit }, payload) {
@@ -98,6 +99,8 @@ export async function requestUser({ commit }, payload) {
   }
 
   const { data } = userData;
+
+  data.created_at = formatDate(data.created_at)
 
   commit({
     type: USER_CREDENTIALS_SUCCESS,

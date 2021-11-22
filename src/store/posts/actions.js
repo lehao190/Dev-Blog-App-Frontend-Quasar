@@ -1,6 +1,7 @@
 import { api } from 'boot/axios';
 // import posts from '.';
 import { handle } from '../../utils/handle_promise';
+import { formatDate } from '../../utils/handle_date';
 import {
   POSTS_FAILURE,
   POSTS_REQUEST,
@@ -23,10 +24,15 @@ export async function requestAllPosts({ commit }) {
       error: postsError.response
     });
 
-    throw postsError.response
+    throw postsError.response;
   }
 
   const { data } = postsData;
+
+  for (let i = 0; i < data.data.length; i++) {
+    data.data[i].created_at = formatDate(data.data[i].created_at);
+    data.data[i].updated_at = formatDate(data.data[i].updated_at);
+  }
 
   commit({
     type: POSTS_SUCCESS,
@@ -36,7 +42,7 @@ export async function requestAllPosts({ commit }) {
 
 // Searching Posts
 export async function searchPosts({ commit }, payload) {
-  const { title } = payload
+  const { title } = payload;
 
   commit({
     type: POSTS_REQUEST
@@ -52,7 +58,7 @@ export async function searchPosts({ commit }, payload) {
       error: postsError.response
     });
 
-    throw postsError.response
+    throw postsError.response;
   }
 
   const { data } = postsData;
@@ -115,8 +121,8 @@ export async function deletePosts({ commit }, payload) {
 
 // Request All Posts With UserId
 export async function requestAllUserPosts({ commit }, payload) {
-  const { userId } = payload
-  
+  const { userId } = payload;
+
   commit({
     type: POSTS_REQUEST
   });
@@ -131,10 +137,15 @@ export async function requestAllUserPosts({ commit }, payload) {
       error: postsError.response
     });
 
-    throw postsError.response
+    throw postsError.response;
   }
 
   const { data } = postsData;
+
+  for (let i = 0; i < data.data.length; i++) {
+    data.data[i].created_at = formatDate(data.data[i].created_at);
+    data.data[i].updated_at = formatDate(data.data[i].updated_at);
+  }
 
   commit({
     type: POSTS_SUCCESS,
@@ -144,7 +155,7 @@ export async function requestAllUserPosts({ commit }, payload) {
 
 // Request All Followed Tags Posts
 export async function requestAllFollowedTagsPosts({ commit }, payload) {
-  const { userId, token } = payload
+  const { userId, token } = payload;
 
   commit({
     type: POSTS_REQUEST
@@ -164,7 +175,7 @@ export async function requestAllFollowedTagsPosts({ commit }, payload) {
       error: postsError.response
     });
 
-    throw postsError.response
+    throw postsError.response;
   }
 
   const { data } = postsData;
@@ -431,6 +442,10 @@ export async function getAllComments({ commit }, payload) {
 
   const comments = data.data;
 
+  for (let i = 0; i < comments.length; i++) {
+    comments[i].created_at = formatDate(comments[i].created_at);
+  }
+
   commit({
     type: POSTS_SUCCESS,
     post: {
@@ -442,7 +457,16 @@ export async function getAllComments({ commit }, payload) {
 
 // Create User Comment
 export async function createComment({ commit }, payload) {
-  const { comments, username, userAvatar, userId, postId, commentText, post, token } = payload;
+  const {
+    comments,
+    username,
+    userAvatar,
+    userId,
+    postId,
+    commentText,
+    post,
+    token
+  } = payload;
 
   commit({
     type: POSTS_REQUEST
