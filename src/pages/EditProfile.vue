@@ -53,10 +53,19 @@ import { LocalStorage } from 'quasar';
 
 export default {
   mounted() {
-    this.$q.loading.show();
-
     const token = LocalStorage.getItem('accessToken');
     const hashURL = window.location.hash.split('/users/edit/');
+
+    if (this.getUser.authenticated === false) {
+      return this.$router.push('/login');
+    } else if (
+      this.getUser.authenticated === true &&
+      this.getUser.user.id != hashURL[1] 
+    ) {
+      return this.$router.push('/');
+    }
+
+    this.$q.loading.show();
 
     this.requestEditUser({
       token,

@@ -21,7 +21,7 @@
         </div>
 
         <!-- Saved Posts -->
-        <div
+        <!-- <div
           class="fixed text-center icon-buttons"
           style="top: 200px; margin-left: 25px;"
         >
@@ -34,7 +34,7 @@
             icon="bookmark"
           />
           <div class="absolute-bottom text-secondary">{{ saves }}</div>
-        </div>
+        </div> -->
       </div>
 
       <!-- Markdown Post Content Section -->
