@@ -14,6 +14,14 @@ A Quasar Framework app
 npm install
 ```
 
+### Change API env object inside quasar.conf.js file to call approriate API endpoints
+env: {
+  API: ctx.dev
+    ? 'http://localhost:3030'
+    : 'https://prod.api.com'
+},
+
+
 ### Start the app in development mode (hot-code reloading, error reporting, etc.)
 ```bash
 quasar dev
