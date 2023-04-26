@@ -11,7 +11,7 @@
 
     <!-- Login with Oauth Providers -->
     <div class="q-py-sm q-gutter-sm">
-      <!-- Github --> 
+      <!-- Github -->
       <q-btn
         class="normal-hover full-width q-py-xs text-weight-bold text-subtitle2"
         color="black"
@@ -19,7 +19,7 @@
       >
         <div class="row q-gutter-md justify-center items-center text-center">
           <q-icon name="fab fa-github" />
-          <a class="text-white oauth-login" href="http://localhost:3030/oauth/github">Đăng nhập bằng GitHub</a>
+          <a class="text-white oauth-login" :href="this.endpointURL + '/oauth/github'">Đăng nhập bằng GitHub</a>
         </div>
       </q-btn>
 
@@ -28,10 +28,10 @@
         class="normal-hover full-width q-py-xs text-weight-bold text-subtitle2"
         color="red"
         no-caps
-      > 
+      >
         <div class="row q-gutter-md justify-center items-center text-center">
           <q-icon name="fab fa-google" />
-          <a class="text-white oauth-login" href="http://localhost:3030/oauth/google">Đăng nhập bằng Google</a>
+          <a class="text-white oauth-login" :href="this.endpointURL + '/oauth/google'">Đăng nhập bằng Google</a>
         </div>
       </q-btn>
     </div>
@@ -39,5 +39,14 @@
 </template>
 
 <script>
-export default {}
+export default {
+  data() {
+    return {
+      endpointURL: null
+    }
+  },
+  created() {
+    this.endpointURL = process.env.API
+  }
+}
 </script>
